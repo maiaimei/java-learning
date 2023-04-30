@@ -625,25 +625,25 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         Node<K,V>[] tab; Node<K,V> p; int n, i;
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
-        if ((p = tab[i = (n - 1) & hash]) == null)
+        if ((p = tab[i = (n - 1) & hash]) == null) // i索引位置的元素为null，直接把元素放入
             tab[i] = newNode(hash, key, value, null);
-        else {
+        else { // i索引位置的元素非null，对于元素处理有三种情况
             Node<K,V> e; K k;
             if (p.hash == hash &&
-                ((k = p.key) == key || (key != null && key.equals(k))))
+                ((k = p.key) == key || (key != null && key.equals(k)))) // 1. 新插入的值与i索引位置的元素一样，放弃插入
                 e = p;
-            else if (p instanceof TreeNode)
+            else if (p instanceof TreeNode) // 2. 该元素是红黑树节点, 那么按照红黑树的方式处理
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
-            else {
+            else { // 3. 如果是链表结构, 那么需要遍历链表 
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
-                        p.next = newNode(hash, key, value, null);
+                        p.next = newNode(hash, key, value, null); // 把新元素连接到链表的最后
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
-                            treeifyBin(tab, hash);
+                            treeifyBin(tab, hash); // 数组某条链上元素数目大于8，数组需要扩容或由链表转化为红黑树
                         break;
                     }
                     if (e.hash == hash &&
-                        ((k = e.key) == key || (key != null && key.equals(k))))
+                        ((k = e.key) == key || (key != null && key.equals(k)))) // 判断新插入的值与链表上的元素是否一样，如果一样则放弃插入
                         break;
                     p = e;
                 }
@@ -658,12 +658,12 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
         ++modCount;
         if (++size > threshold)
-            resize();
+            resize(); // 数组元素数目超出阈值，数组需要扩容
         afterNodeInsertion(evict);
         return null;
     }
 
-    /**
+    /** 数组为空或者元素数量超过阈值, 将会执行resize()方法, 结果是将数组长度加倍、阈值加倍。
      * Initializes or doubles table size.  If null, allocates in
      * accord with initial capacity target held in field threshold.
      * Otherwise, because we are using power-of-two expansion, the
@@ -673,22 +673,22 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return the table
      */
     final Node<K,V>[] resize() {
-        Node<K,V>[] oldTab = table;
-        int oldCap = (oldTab == null) ? 0 : oldTab.length;
-        int oldThr = threshold;
-        int newCap, newThr = 0;
-        if (oldCap > 0) {
-            if (oldCap >= MAXIMUM_CAPACITY) {
+        Node<K,V>[] oldTab = table; // 旧数组
+        int oldCap = (oldTab == null) ? 0 : oldTab.length; // 旧长度
+        int oldThr = threshold; // 旧阈值
+        int newCap, newThr = 0; // 新长度、新阈值
+        if (oldCap > 0) { // 非空数组处理
+            if (oldCap >= MAXIMUM_CAPACITY) { // 元素数目超出最大范围, 把阈值调整到最大值, 同时返回原数组
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
             }
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
-                     oldCap >= DEFAULT_INITIAL_CAPACITY)
+                     oldCap >= DEFAULT_INITIAL_CAPACITY) // 对于元素数目没有超过最大范围, 长度加倍, 阈值也加倍
                 newThr = oldThr << 1; // double threshold
         }
         else if (oldThr > 0) // initial capacity was placed in threshold
             newCap = oldThr;
-        else {               // zero initial threshold signifies using defaults
+        else {               // zero initial threshold signifies using defaults 数组为空，初始化长度为16，阈值为12
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
@@ -699,31 +699,31 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }
         threshold = newThr;
         @SuppressWarnings({"rawtypes","unchecked"})
-        Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+        Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap]; // 创建新数组（数组扩容）
         table = newTab;
-        if (oldTab != null) {
+        if (oldTab != null) { // 把旧数组的元素复制到新数组, 对于元素处理有三种情况
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e;
                 if ((e = oldTab[j]) != null) {
-                    oldTab[j] = null;
-                    if (e.next == null)
+                    oldTab[j] = null; // help GC
+                    if (e.next == null) // 1. 只有一个元素, 没有形成链表或者红黑树, 直接把元素放入新数组
                         newTab[e.hash & (newCap - 1)] = e;
-                    else if (e instanceof TreeNode)
+                    else if (e instanceof TreeNode) // 2. 该元素是红黑树节点, 那么按照红黑树的方式处理
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
-                    else { // preserve order
-                        Node<K,V> loHead = null, loTail = null;
-                        Node<K,V> hiHead = null, hiTail = null;
-                        Node<K,V> next;
-                        do {
+                    else { // 3. 如果是链表结构, 那么需要遍历链表 preserve order
+                        Node<K,V> loHead = null, loTail = null; // 旧索引位置对应的头尾节点
+                        Node<K,V> hiHead = null, hiTail = null; // 新索引位置对应的头尾节点
+                        Node<K,V> next; // 记录下一个节点
+                        do { // 当数组长度加倍后, 元素在新数组的索引值有两种情况, 跟旧数组索引值一样, 或者等于旧数组索引值加旧数组长度
                             next = e.next;
-                            if ((e.hash & oldCap) == 0) {
-                                if (loTail == null)
+                            if ((e.hash & oldCap) == 0) { // 与运算为 0, 元素在新数组的索引值跟旧数组索引值一样
+                                if (loTail == null) // 尾节点是空, 说明这是第一个元素, 用头节点指向这个元素
                                     loHead = e;
-                                else
+                                else // 否则就把这个元素连接到链表的最后
                                     loTail.next = e;
-                                loTail = e;
+                                loTail = e; // 最后尾节点指向链表新增的节点, 也是最后一个节点
                             }
-                            else {
+                            else { // 与运算为 非0, 元素在新数组的索引值等于旧数组索引值加旧数组长度
                                 if (hiTail == null)
                                     hiHead = e;
                                 else
@@ -731,13 +731,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
-                        if (loTail != null) {
+                        if (loTail != null) { // 旧索引位置对应的尾节点不为空, 链表是存在的, 把旧索引位置对应的头节点保存到新数组的旧索引值
                             loTail.next = null;
-                            newTab[j] = loHead;
+                            newTab[j] = loHead; // 元素在新数组的索引值跟旧数组索引值一样
                         }
-                        if (hiTail != null) {
+                        if (hiTail != null) { // 新索引位置对应的尾节点不为空, 链表是存在的, 把新索引位置对应的头节点保存到新数组的新索引值
                             hiTail.next = null;
-                            newTab[j + oldCap] = hiHead;
+                            newTab[j + oldCap] = hiHead; // 元素在新数组的索引值等于旧数组索引值加旧数组长度
                         }
                     }
                 }
@@ -746,7 +746,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         return newTab;
     }
 
-    /**
+    /** 如果数组元素数目小于64，则数组元素数目翻倍，否则将指定索引位置的链表转化为红黑树
      * Replaces all linked nodes in bin at index for given hash unless
      * table is too small, in which case resizes instead.
      */
