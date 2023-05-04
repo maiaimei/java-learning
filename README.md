@@ -1,9 +1,3 @@
-java17-src，是[Java SE Development Kit 17.0.1 - Windows x64 Compressed Archive](https://download.oracle.com/java/17/archive/jdk-17.0.1_windows-x64_bin.zip)解压目录下的
-
-%JAVA_HOME%/lib/src.zip
-
-
-
 在Oracle官网的[Java Downloads](https://www.oracle.com/java/technologies/downloads/)可以下载最新版本的jdk
 
 在Oracle官网的[Java Archive](https://www.oracle.com/java/technologies/downloads/archive/)可以下载各种版本的jdk
