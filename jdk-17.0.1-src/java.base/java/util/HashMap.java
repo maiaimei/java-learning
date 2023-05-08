@@ -755,9 +755,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
         else if ((e = tab[index = (n - 1) & hash]) != null) {
-            TreeNode<K,V> hd = null, tl = null;
-            do {
-                TreeNode<K,V> p = replacementTreeNode(e, null);
+            TreeNode<K,V> hd = null, tl = null; // 双向链表头尾节点，hd头节点，tl尾节点
+            do { // 将单向链表转换成双向链表
+                TreeNode<K,V> p = replacementTreeNode(e, null); // 把所有节点换成树节点
                 if (tl == null)
                     hd = p;
                 else {
@@ -767,7 +767,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 tl = p;
             } while ((e = e.next) != null);
             if ((tab[index] = hd) != null)
-                hd.treeify(tab);
+                hd.treeify(tab); // 树化双向链表
         }
     }
 
@@ -2065,7 +2065,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             for (TreeNode<K,V> x = this, next; x != null; x = next) {
                 next = (TreeNode<K,V>)x.next;
                 x.left = x.right = null;
-                if (root == null) {
+                if (root == null) { // 第一个元素作为根节点且为黑节点，其它元素依次插入到树中再做平衡
                     x.parent = null;
                     x.red = false;
                     root = x;
@@ -2074,7 +2074,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     K k = x.key;
                     int h = x.hash;
                     Class<?> kc = null;
-                    for (TreeNode<K,V> p = root;;) {
+                    for (TreeNode<K,V> p = root;;) { // 从根节点查找元素插入的位置
                         int dir, ph;
                         K pk = p.key;
                         if ((ph = p.hash) > h)
@@ -2093,13 +2093,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                                 xp.left = x;
                             else
                                 xp.right = x;
-                            root = balanceInsertion(root, x);
+                            root = balanceInsertion(root, x); // 插入后平衡
                             break;
                         }
                     }
                 }
             }
-            moveRootToFront(tab, root);
+            moveRootToFront(tab, root); // 把根节点移动到链表的头节点，因为经过平衡之后原来的第一个元素不一定是根节点了
         }
 
         /**
