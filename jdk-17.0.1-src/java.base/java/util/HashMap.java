@@ -2374,52 +2374,52 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
         static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,
                                                     TreeNode<K,V> x) {
-            x.red = true;
-            for (TreeNode<K,V> xp, xpp, xppl, xppr;;) {
-                if ((xp = x.parent) == null) {
-                    x.red = false;
+            x.red = true; // 新插入的节点标为红色
+            for (TreeNode<K,V> xp, xpp, xppl, xppr;;) { // x当前节点、xp父节点、xpp爷爷节点、xppl左叔叔节点、xppr右叔叔节点
+                if ((xp = x.parent) == null) { // 如果父节点为空
+                    x.red = false; // 当前节点标记为黑色
                     return x;
                 }
-                else if (!xp.red || (xpp = xp.parent) == null)
+                else if (!xp.red || (xpp = xp.parent) == null) // 如果父节点为黑色或者爷爷节点为空
                     return root;
-                if (xp == (xppl = xpp.left)) {
-                    if ((xppr = xpp.right) != null && xppr.red) {
-                        xppr.red = false;
-                        xp.red = false;
-                        xpp.red = true;
-                        x = xpp;
+                if (xp == (xppl = xpp.left)) { // 如果父节点是左叔叔节点
+                    if ((xppr = xpp.right) != null && xppr.red) { // 如果右叔叔节点非空且为红色
+                        xppr.red = false; // 右叔叔节点标记为黑色
+                        xp.red = false; // 父节点标记为黑色
+                        xpp.red = true; // 爷爷节点标记为红色
+                        x = xpp; // 将爷爷节点作为当前节点，进入下一次循环
                     }
                     else {
-                        if (x == xp.right) {
-                            root = rotateLeft(root, x = xp);
+                        if (x == xp.right) { // 如果当前节点是父节点的右孩子
+                            root = rotateLeft(root, x = xp); // 左旋
                             xpp = (xp = x.parent) == null ? null : xp.parent;
                         }
-                        if (xp != null) {
-                            xp.red = false;
-                            if (xpp != null) {
-                                xpp.red = true;
-                                root = rotateRight(root, xpp);
+                        if (xp != null) { // 如果父节点非空
+                            xp.red = false; // 父节点标记为黑色
+                            if (xpp != null) { // 如果爷爷节点非空
+                                xpp.red = true; // 爷爷节点标记为红色
+                                root = rotateRight(root, xpp); // 右旋
                             }
                         }
                     }
                 }
                 else {
-                    if (xppl != null && xppl.red) {
-                        xppl.red = false;
-                        xp.red = false;
-                        xpp.red = true;
-                        x = xpp;
+                    if (xppl != null && xppl.red) { // 如果左叔叔节点非空且为红色
+                        xppl.red = false; // 左叔叔节点标记为黑色
+                        xp.red = false; // 父节点标记为黑色
+                        xpp.red = true; // 爷爷节点标记为红色
+                        x = xpp; // 将爷爷节点作为当前节点，进入下一次循环
                     }
                     else {
-                        if (x == xp.left) {
-                            root = rotateRight(root, x = xp);
+                        if (x == xp.left) { // 如果当前节点是父节点的左孩子
+                            root = rotateRight(root, x = xp); // 右旋
                             xpp = (xp = x.parent) == null ? null : xp.parent;
                         }
-                        if (xp != null) {
-                            xp.red = false;
-                            if (xpp != null) {
-                                xpp.red = true;
-                                root = rotateLeft(root, xpp);
+                        if (xp != null) { // 如果父节点非空
+                            xp.red = false; // 父节点标记为黑色
+                            if (xpp != null) { // 如果爷爷节点非空
+                                xpp.red = true; // 爷爷节点标记为红色
+                                root = rotateLeft(root, xpp); // 左旋
                             }
                         }
                     }
