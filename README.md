@@ -1,3 +1,5 @@
+数据结构动态演示：[https://www.cs.usfca.edu/~galles/visualization/Algorithms.html](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
+
 在Oracle官网的[Java Downloads](https://www.oracle.com/java/technologies/downloads/)可以下载最新版本的jdk
 
 在Oracle官网的[Java Archive](https://www.oracle.com/java/technologies/downloads/archive/)可以下载各种版本的jdk

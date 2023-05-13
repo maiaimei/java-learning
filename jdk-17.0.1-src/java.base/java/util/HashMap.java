@@ -2340,9 +2340,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                                               TreeNode<K,V> p) {
             TreeNode<K,V> r, pp, rl;
             if (p != null && (r = p.right) != null) {
-                if ((rl = p.right = r.left) != null)
+                if ((rl = p.right = r.left) != null) // 将右孩子的左子树挂在父节点的右子树上
                     rl.parent = p;
-                if ((pp = r.parent = p.parent) == null)
+                if ((pp = r.parent = p.parent) == null) // 将祖父节点设置为右孩子节点的父节点
                     (root = r).red = false;
                 else if (pp.left == p)
                     pp.left = r;
@@ -2375,23 +2375,23 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,
                                                     TreeNode<K,V> x) {
             x.red = true; // 新插入的节点标为红色
-            for (TreeNode<K,V> xp, xpp, xppl, xppr;;) { // x当前节点、xp父节点、xpp爷爷节点、xppl左叔叔节点、xppr右叔叔节点
+            for (TreeNode<K,V> xp, xpp, xppl, xppr;;) { // x当前节点、xp父节点、xpp祖父节点、xppl祖父左孩子节点、xppr祖父右孩子节点
                 if ((xp = x.parent) == null) { // 如果父节点为空
                     x.red = false; // 当前节点标记为黑色
                     return x;
                 }
                 else if (!xp.red || (xpp = xp.parent) == null) // 如果父节点为黑色或者爷爷节点为空
                     return root;
-                if (xp == (xppl = xpp.left)) { // 如果父节点是左叔叔节点
-                    if ((xppr = xpp.right) != null && xppr.red) { // 如果右叔叔节点非空且为红色
-                        xppr.red = false; // 右叔叔节点标记为黑色
+                if (xp == (xppl = xpp.left)) { // 如果父节点是祖父左孩子节点
+                    if ((xppr = xpp.right) != null && xppr.red) { // 如果祖父右孩子节点非空且为红色
+                        xppr.red = false; // 祖父右孩子节点标记为黑色
                         xp.red = false; // 父节点标记为黑色
-                        xpp.red = true; // 爷爷节点标记为红色
-                        x = xpp; // 将爷爷节点作为当前节点，进入下一次循环
+                        xpp.red = true; // 祖父节点标记为红色
+                        x = xpp; // 将祖父节点作为当前节点，进入下一次循环
                     }
                     else {
-                        if (x == xp.right) { // 如果当前节点是父节点的右孩子
-                            root = rotateLeft(root, x = xp); // 左旋
+                        if (x == xp.right) { // 如果当前节点是父节点的右孩子，LR双红
+                            root = rotateLeft(root, x = xp); // 以父节点为旋转节点进行左旋
                             xpp = (xp = x.parent) == null ? null : xp.parent;
                         }
                         if (xp != null) { // 如果父节点非空

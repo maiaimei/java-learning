@@ -1,14 +1,17 @@
 package cn.maiaimei.java.collection;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Objects;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * HashSet：底层使用HashMap，HashMap底层使用数组+链表+红黑树
  */
+@Slf4j
 @SuppressWarnings("all")
 public class HashSetTest {
     @Test
@@ -86,7 +89,35 @@ public class HashSetTest {
         System.out.println(hashSet);
     }
     
-    class A{
+    @Test
+    void testAdd07(){
+        final HashSet hashSet = new HashSet();
+        Integer[] numbers = new Integer[]{50, 93, 13, 1, 8, 69, 41, 39, 80, 28, 35, 64, 81, 72, 19};
+        for (int i = 0; i < numbers.length; i++) {
+            hashSet.add(new A(numbers[i]));
+        }
+        System.out.println(hashSet);
+    }
+    
+    @Test
+    void testGenerateNumbers(){
+        System.out.println(generateNumbers(15,50));
+    }
+    
+    Set<Integer> generateNumbers(int size, int bound){
+        Set<Integer> numbers = new HashSet<>();
+        final Random random = new Random();
+        while (true){
+            if(numbers.size() > size){
+                break;
+            }
+            final Integer number = Integer.valueOf(random.nextInt(bound));
+            numbers.add(number);
+        }
+        return numbers;
+    }
+    
+    class A implements Comparable<A>{
         private Integer n;
         private Integer h;
         
@@ -110,6 +141,11 @@ public class HashSetTest {
         @Override
         public int hashCode() {
             return this.h == null ? 0 : this.h;
+        }
+
+        @Override
+        public int compareTo(A o) {
+            return Integer.compare(n, o.n);
         }
     }
 }
