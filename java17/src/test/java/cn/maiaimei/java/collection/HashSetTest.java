@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -39,7 +37,7 @@ public class HashSetTest {
     void testAdd03(){
         final HashSet hashSet = new HashSet();
         for (Integer i = 0; i <= 7; i++) {
-            hashSet.add(new A(i));
+            hashSet.add(new MyInteger(i));
         }
         System.out.println(hashSet);
     }
@@ -49,7 +47,7 @@ public class HashSetTest {
     void testAdd04(){
         final HashSet hashSet = new HashSet();
         for (Integer i = 0; i <= 8; i++) {
-            hashSet.add(new A(i));
+            hashSet.add(new MyInteger(i));
         }
         System.out.println(hashSet);
     }
@@ -59,7 +57,7 @@ public class HashSetTest {
     void testAdd05(){
         final HashSet hashSet = new HashSet();
         for (Integer i = 0; i <= 8; i++) {
-            hashSet.add(new A(i, "xxx".hashCode()));
+            hashSet.add(new MyInteger(i, "xxx".hashCode()));
         }
         System.out.println(hashSet);
     }
@@ -84,7 +82,7 @@ public class HashSetTest {
             if(i==10){
                 System.out.println("链表转化为红黑树");
             }
-            hashSet.add(new A(i));
+            hashSet.add(new MyInteger(i));
         }
         System.out.println(hashSet);
     }
@@ -93,10 +91,20 @@ public class HashSetTest {
     void testAdd07(){
         final HashSet hashSet = new HashSet();
         Integer[] numbers = new Integer[]{50, 93, 13, 1, 8, 69, 41, 39, 80, 28, 35, 64, 81, 72, 19};
-        for (int i = 0; i < numbers.length; i++) {
-            hashSet.add(new A(numbers[i]));
+        for (Integer number : numbers) {
+            hashSet.add(new MyInteger(number));
         }
         System.out.println(hashSet);
+    }
+    
+    @Test
+    void testRemove(){
+        final HashSet hashSet = new HashSet();
+        Integer[] numbers = new Integer[]{50, 93, 13, 1, 8, 69, 41, 39, 80, 28, 35, 64, 81, 72, 19};
+        for (Integer number : numbers) {
+            hashSet.add(new MyInteger(number));
+        }
+        hashSet.remove(new MyInteger(81));
     }
     
     @Test
@@ -117,15 +125,15 @@ public class HashSetTest {
         return numbers;
     }
     
-    class A implements Comparable<A>{
+    class MyInteger implements Comparable<MyInteger>{
         private Integer n;
         private Integer h;
         
-        public A(Integer n){
+        public MyInteger(Integer n){
             this.n = n;
         }
 
-        public A(Integer n, Integer h){
+        public MyInteger(Integer n, Integer h){
             this.n = n;
             this.h = h;
         }
@@ -134,8 +142,8 @@ public class HashSetTest {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            A a = (A) o;
-            return Objects.equals(n, a.n);
+            MyInteger myInteger = (MyInteger) o;
+            return Objects.equals(n, myInteger.n);
         }
 
         @Override
@@ -144,7 +152,7 @@ public class HashSetTest {
         }
 
         @Override
-        public int compareTo(A o) {
+        public int compareTo(MyInteger o) {
             return Integer.compare(n, o.n);
         }
     }
