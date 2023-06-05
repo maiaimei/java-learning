@@ -28,7 +28,7 @@
  */
 package java.math;
 
-/**
+/**为能够放弃精度的数值运算指定舍入策略。
  * Specifies a <i>rounding policy</i> for numerical operations capable
  * of discarding precision. Each rounding mode indicates how the least
  * significant returned digit of a rounded result is to be calculated.
