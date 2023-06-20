@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * 高精度数字需要用BigDecimal，不可用float、double，如金额等
@@ -55,6 +54,12 @@ public class BigDecimalTest {
     log.info("{}", BigDecimal.valueOf(1.0));
   }
 
+  /**
+   * 加减乘除
+   *
+   * @param i i
+   * @param j j
+   */
   @ParameterizedTest
   @MethodSource("numbersProvider")
   void testCalculation(String i, String j) {
@@ -74,45 +79,5 @@ public class BigDecimalTest {
         Arguments.of("1", "0.9"),
         Arguments.of("10", "3")
     );
-  }
-
-  @ParameterizedTest
-  @ValueSource(doubles = {-2, -1.9, -1.8, -1.7, -1.6, -1.5, -1.4, -1.3, -1.2, -1.1,
-      1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2})
-  void testRoundingMode(double i) {
-    final BigDecimal a = new BigDecimal(Double.toString(i));
-    final BigDecimal b = new BigDecimal("1");
-
-    // 向远离零点方向舍入，保留N位小数，N=0
-    //log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.UP));
-
-    // 向零点方向舍入，保留N位小数，N=0
-    //log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.DOWN));
-
-    // 正数向远离零点方向舍入，负数向零点方向舍入，保留N位小数，N=0
-    //log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.CEILING));
-
-    // 正数向零点方向舍入，负数向远离零点方向舍入，保留N位小数，N=0
-    //log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.FLOOR));
-
-    // 四舍五入，保留N位小数，N=0
-    // Behaves as for RoundingMode.UP if the discarded fraction is ≥ 0.5; otherwise, behaves as for RoundingMode.DOWN. 
-    //log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.HALF_UP));
-
-    // Behaves as for RoundingMode.UP if the discarded fraction is > 0.5; otherwise, behaves as for RoundingMode.DOWN.
-    //log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.HALF_DOWN));
-
-    // Behaves as for RoundingMode.HALF_UP if the digit to the left of the discarded fraction is odd; behaves as for RoundingMode.HALF_DOWN if it's even.
-    log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.HALF_EVEN));
-
-    //log.info("{}/{}={}", a, b, a.divide(b, 0, RoundingMode.UNNECESSARY));
-  }
-
-  @ParameterizedTest
-  @ValueSource(doubles = {1.011, 1.041, 1.051})
-  void testRoundingMode_HALF_EVEN(double i) {
-    final BigDecimal a = new BigDecimal(Double.toString(i));
-    final BigDecimal b = new BigDecimal("1");
-    log.info("{}/{}={}", a, b, a.divide(b, 2, RoundingMode.HALF_EVEN));
   }
 }

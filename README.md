@@ -1,14 +1,15 @@
-数据结构动态演示：[https://www.cs.usfca.edu/~galles/visualization/Algorithms.html](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
+[下载最新版本的jdk](https://www.oracle.com/java/technologies/downloads/)
 
-在Oracle官网的[Java Downloads](https://www.oracle.com/java/technologies/downloads/)可以下载最新版本的jdk
+[下载各种版本的jdk](https://www.oracle.com/java/technologies/downloads/archive/)
 
-在Oracle官网的[Java Archive](https://www.oracle.com/java/technologies/downloads/archive/)可以下载各种版本的jdk
-
-* 下载[Java SE 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-  * 下载[Java SE Development Kit 17.0.1 - Windows x64 Compressed Archive](https://download.oracle.com/java/17/archive/jdk-17.0.1_windows-x64_bin.zip)
+[下载jdk源码](https://jdk.java.net/)
 
 
 
-下载jdk源码：[https://jdk.java.net/](https://jdk.java.net/)
+[JDK 17 Documentation](https://docs.oracle.com/en/java/javase/17/)
 
-​                         [https://jdk.java.net/20/](https://jdk.java.net/20/)
+[Java® Platform, Standard Edition & Java Development Kit Version 17 API Specification](https://docs.oracle.com/en/java/javase/17/docs/api/index.html)
+
+
+
+[数据结构动态演示](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
