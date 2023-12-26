@@ -2,9 +2,11 @@ package cn.maiaimei.java.math;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,20 @@ import org.junit.jupiter.params.provider.MethodSource;
  */
 @Slf4j
 public class BigDecimalTest {
+
+  @Test
+  void testGetIntegerValueAndDecimalValue() {
+    List<String> numbers = Lists.newArrayList("123", "0.456", "123.456", "123.0", "123.00");
+    numbers.forEach(number -> {
+      String[] parts = number.split("\\.");
+      String integerValue = parts[0];
+      String decimalValue = parts.length == 2 ? parts[1] : "";
+      int integerPlace = integerValue.length();
+      int decimalPlace = decimalValue.length();
+      log.info("integerValue: {}, decimalValue: {}, integerPlace: {}, decimalPlace: {}"
+          , integerValue, decimalValue, integerPlace, decimalPlace);
+    });
+  }
 
   @Test
   void testFloat() {
