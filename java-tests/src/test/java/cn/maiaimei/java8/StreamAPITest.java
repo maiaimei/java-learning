@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@Slf4j
 public class StreamAPITest {
 
   List<Person> personList;
@@ -54,25 +56,31 @@ public class StreamAPITest {
   public void testCollectorsToMap() {
     // key不重复场景：id作为map的key，name作为map的value
     final Map<String, String> map01 = personList.stream().collect(Collectors.toMap(Person::getId, Person::getName));
-
-    // key不重复场景：id作为map的key，Person对象作为map的value
-    final Map<String, Person> map02 = personList.stream().collect(Collectors.toMap(Person::getId, Function.identity()));
-    final Map<String, Person> map03 = personList.stream().collect(Collectors.toMap(Person::getId, p -> p));
-
-    // key重复场景，country作为map的key，Person对象作为map的value，如果p1与p2的key相同，选择p1作为那个key所对应的value值，即取前一个Person对象作为那个key所对应的value值
-    final Map<String, Person> map04 = personList.stream().collect(Collectors.toMap(Person::getCountry, p -> p, (p1, p2) -> p1));
-    // key重复场景，country作为map的key，Person对象作为map的value，如果p1与p2的key相同，选择p2作为那个key所对应的value值，即取后一个Person对象作为那个key所对应的value值
-    final Map<String, Person> map05 = personList.stream().collect(Collectors.toMap(Person::getCountry, p -> p, (p1, p2) -> p2));
+    log.info("map01:\n{}", map01);
 
     // key重复场景，country作为map的key，name作为map的value，如果n1与n2的key相同，选择n1 + ", " + n2作为那个key所对应的value值
-    final Map<String, String> map06 = personList.stream()
+    final Map<String, String> map02 = personList.stream()
         .collect(Collectors.toMap(Person::getCountry, Person::getName, (n1, n2) -> n1 + ", " + n2));
+    log.info("map02:\n{}", map02);
 
+    // key重复场景，country作为map的key，name作为map的value，如果n1与n2的key相同，选择n1 + ", " + n2作为那个key所对应的value值
     // mapSupplier：Map构造器，在需要返回特定的Map时使用。第四个参数mapSupplier用于返回一个任意类型的Map实例，比如我们希望返回的Map是根据Key排序的。TreeMap::new
-    final Map<String, String> map07 = personList.stream()
+    final Map<String, String> map03 = personList.stream()
         .collect(Collectors.toMap(Person::getCountry, Person::getName, (n1, n2) -> n1 + ", " + n2, TreeMap::new));
+    log.info("map03:\n{}", map03);
 
-    System.out.println();
+    // key不重复场景：id作为map的key，Person对象作为map的value
+    final Map<String, Person> map04 = personList.stream().collect(Collectors.toMap(Person::getId, Function.identity()));
+    final Map<String, Person> map05 = personList.stream().collect(Collectors.toMap(Person::getId, p -> p));
+    log.info("map04:\n{}", map04);
+    log.info("map05:\n{}", map05);
+
+    // key重复场景，country作为map的key，Person对象作为map的value，如果p1与p2的key相同，选择p1作为那个key所对应的value值，即取前一个Person对象作为那个key所对应的value值
+    final Map<String, Person> map06 = personList.stream().collect(Collectors.toMap(Person::getCountry, p -> p, (p1, p2) -> p1));
+    // key重复场景，country作为map的key，Person对象作为map的value，如果p1与p2的key相同，选择p2作为那个key所对应的value值，即取后一个Person对象作为那个key所对应的value值
+    final Map<String, Person> map07 = personList.stream().collect(Collectors.toMap(Person::getCountry, p -> p, (p1, p2) -> p2));
+    log.info("map06:\n{}", map06);
+    log.info("map07:\n{}", map07);
   }
 
   @Data
