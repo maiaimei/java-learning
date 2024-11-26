@@ -4,6 +4,8 @@ import cn.maiaimei.BaseTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,7 +31,7 @@ public class StreamAPITest extends BaseTest {
   @BeforeEach
   public void setup() throws JsonProcessingException {
     final String fileContent = readFileContent("person-list.json");
-    personList = objectMapper.readValue(fileContent, new TypeReference<>() {
+    personList = objectMapper.readValue(fileContent, new TypeReference<List<Person>>() {
     });
   }
 
@@ -37,6 +39,16 @@ public class StreamAPITest extends BaseTest {
   public void teardown() {
     personList.clear();
     personList = null;
+  }
+
+  @Test
+  public void testFlatMap() {
+    List<List<String>> nestedList = Lists.newArrayList();
+    nestedList.add(Lists.newArrayList("1", "2", "3"));
+    nestedList.add(Lists.newArrayList("4", "5", "6"));
+    final List<String> list = nestedList.stream().flatMap(Collection::stream).collect(Collectors.toList());
+    info("{}\n", nestedList);
+    info("{}\n", list);
   }
 
   /**
