@@ -122,9 +122,7 @@ jshell> /list -
 
 ## New Features
 
-## Enhancements
-
-### 接口的私有方法
+### private methods of interfaces
 
 Private interface methods are supported. This support allows nonabstract methods of an interface to share code between them.
 
@@ -133,6 +131,27 @@ Private interface methods are supported. This support allows nonabstract methods
 | JDK 7 | 在接口中仅支持全局常量、抽象方法 |
 | JDK 8 | 在接口中支持静态方法、默认方法   |
 | JDK 9 | 在接口中支持私有方法             |
+
+### try-with-resources
+
+```java
+// A final resource
+final Resource resource1 = new Resource("resource1");
+// An effectively final resource
+Resource resource2 = new Resource("resource2");
+
+// In Java SE 7 or 8, you would declare new variables, like this:
+try (Resource r1 = resource1;
+     Resource r2 = resource2) {
+    ...
+}
+
+// New and improved try-with-resources statement in Java SE 9
+try (resource1;
+     resource2) {
+    ...
+}
+```
 
 ## Removed APIs, Features, and Options
 
