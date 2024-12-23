@@ -10,7 +10,7 @@ JDK 9 is released on September 22, 2017.
 
 Java Platform Module System, a new kind of Java programing component, the module, which is a a uniquely named, reusable group of related packages, as well as resources (such as images and XML files) and a module descriptor。
 
-简单来说，你可以将一个模块看作是一组唯一命名、可重用的包、资源和模块描述文件（module-info.java）。任意一个 jar 文件，只要加上一个模块描述文件（module-info.java），就可以升级为一个模块。
+模块化系统，简单来说，你可以将一个模块看作是一组唯一命名、可重用的包、资源和模块描述文件（module-info.java）。任意一个 jar 文件，只要加上一个模块描述文件（module-info.java），就可以升级为一个模块。
 
 ![](./images/20241222-143425.png)
 
@@ -126,6 +126,8 @@ jshell> /list -
 
 Private interface methods are supported. This support allows nonabstract methods of an interface to share code between them.
 
+Java 9 允许在接口中使用私有方法。
+
 | JDK   | Feature                          |
 | ----- | -------------------------------- |
 | JDK 7 | 在接口中仅支持全局常量、抽象方法 |
@@ -134,6 +136,8 @@ Private interface methods are supported. This support allows nonabstract methods
 
 ### try-with-resources
 
+Allow effectively final variables to be used as resources in the `try-with-resources` statement.
+
 ```java
 // A final resource
 final Resource resource1 = new Resource("resource1");
@@ -141,12 +145,15 @@ final Resource resource1 = new Resource("resource1");
 Resource resource2 = new Resource("resource2");
 
 // In Java SE 7 or 8, you would declare new variables, like this:
+// 在 Java 9 之前，我们只能在 try-with-resources 块中声明变量：
 try (Resource r1 = resource1;
      Resource r2 = resource2) {
     ...
 }
 
 // New and improved try-with-resources statement in Java SE 9
+// 在 Java 9 之后，在 try-with-resources 语句中可以使用 effectively-final 变量。
+// effectively-final 变量是没有被 final 修饰但是值在初始化后从未更改的变量。
 try (resource1;
      resource2) {
     ...
