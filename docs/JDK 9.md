@@ -25,7 +25,9 @@ module <module-name> {
   // 需要其他模块（传递依赖）：简化模块之间依赖管理
   requires transitive <module-name>;  
   // 需要其他模块（静态依赖）：编译时必须存在，但运行时不一定需要，JVM解析模块时不会加载静态依赖的模块（即使不存在，也不报错）
-  requires static <module-name>;    
+  requires static <module-name>;  
+  // 需要其他模块（静态依赖 + 传递依赖）
+  requires static transitive <module-name>;  
   // 导出包：声明一个模块的包对其他模块可见
   exports <package-name>;
   // 导出包（定向导出）：限定将包导出到某些模块，其它模块不可访问。多个模块使用逗号分隔。
