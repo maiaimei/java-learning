@@ -14,9 +14,11 @@ Java Platform Module System, a new kind of Java programing component, the module
 
 ![](./images/20241222-143425.png)
 
-module-info.java 是一个特殊的 Java 文件，位于模块的根目录下。它定义了模块的名称、导出的包、需要的其他模块以及其他模块相关的声明。
+模块描述文件（module-info.java）是一个特殊的 Java 文件，位于模块的根目录下（源码目录下，Maven 项目的源码文件夹通常是 src/main/java 中的 java 文件夹）。
 
-基本语法：
+![](./images/20241224-232532.png)
+
+它定义了模块的名称、导出的包、依赖的其他模块以及访问控制等。基本语法：
 
 ```java
 module <module-name> {
