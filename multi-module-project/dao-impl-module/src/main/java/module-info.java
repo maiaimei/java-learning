@@ -1,6 +1,6 @@
 module org.example.daoimplmodule {
-  requires org.example.entitymodule;
-  requires org.example.daomodule;
+  requires transitive org.example.entitymodule;
+  requires transitive org.example.daomodule;
 
   exports org.example.dao.impl;
 }

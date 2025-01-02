@@ -4,7 +4,7 @@
 
 JDK 9 is released on September 22, 2017.
 
-## Important Enhancements and Changes
+## New Features
 
 ### Java Platform Module System
 
@@ -17,6 +17,80 @@ Java Platform Module System, a new kind of Java programing component, the module
 模块描述文件（module-info.java）是一个特殊的 Java 文件，位于模块的根目录下（源码目录下，Maven 项目的源码文件夹通常是 src/main/java 中的 java 文件夹）。
 
 ![](./images/20241224-232532.png)
+
+The `module-info.java` file is used to define a module in Java's module system, introduced in Java 9. It specifies the module's dependencies, the packages it exports, and other module-related information. Here are the key components and their usage:
+
+**Module Declaration**: The `module` keyword is used to declare a module.
+
+```java
+module com.example.myapp {
+    // Module directives go here
+}
+```
+
+**Requires**: Specifies the dependencies of the module. It indicates which other modules this module depends on.
+
+- **`requires`**: Specifies a mandatory dependency at both compile time and runtime.
+- **`requires transitive`**: Specifies a mandatory dependency that is also propagated to modules that depend on the current module. The **`requires transitive`** directive specifies that not only does the current module depend on another module, but any module that depends on the current module will also implicitly depend on the transitive module.
+- **`requires static`**: Specifies an optional dependency that is only required at compile time. The **`requires static`** directive specifies an optional dependency. The module is only required at compile time, not at runtime. This is useful for dependencies that are only needed during development, such as annotation processors or testing libraries.
+- **`requires static transitive`**: Specifies an optional dependency that is required at compile time and is also propagated to modules that depend on the current module.
+
+```java
+module com.example.myapp {
+    // Basic dependency
+    requires java.sql;
+
+    // Transitive dependency
+    requires transitive java.logging;
+
+    // Static dependency
+    requires static org.junit.jupiter.api;
+
+    // Static transitive dependency
+    requires static transitive org.mockito;
+}
+```
+
+**Exports**: Specifies the packages that the module makes available to other modules. Only the packages listed here can be accessed by other modules.
+
+- **`exports`**: Specifies that a package is accessible to all other modules.
+- **`exports ... to ...`**: Specifies that a package is accessible only to the specified modules.
+
+```java
+module com.example.myapp {
+    // Exporting a package to all modules
+    exports com.example.myapp.services;
+
+    // Exporting a package to specific modules
+    exports com.example.myapp.internal to com.example.clientapp, com.example.anotherapp;
+}
+```
+
+**Uses**: Specifies a service that the module consumes. This is used in conjunction with the ServiceLoader API.
+
+```java
+uses com.example.myapp.services.MyService;
+```
+
+**Provides**: Specifies a service implementation that the module provides.
+
+```java
+provides com.example.myapp.services.MyService with com.example.myapp.services.impl.MyServiceImpl;
+```
+
+**Open**: Opens a package to allow deep reflection by other modules.
+
+```java
+opens com.example.myapp.internal to some.other.module;
+```
+
+**Open Module**: Opens all packages in the module for deep reflection.
+
+```java
+open module com.example.myapp {
+    // Module directives go here
+}
+```
 
 它定义了模块的名称、导出的包、依赖的其他模块以及访问控制等。基本语法：
 
@@ -123,8 +197,6 @@ jshell> /list -
 
 <再次按 Tab 可查看提要>
 ```
-
-## New Features
 
 ### private methods of interfaces
 

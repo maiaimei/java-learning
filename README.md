@@ -1,5 +1,9 @@
 # Java
 
+[https://openjdk.org/](https://openjdk.org/)
+
+[https://openjdk.org/jeps/0](https://openjdk.org/jeps/0)
+
 [Java](https://www.oracle.com/java/)
 
 [Java Downloads](https://www.oracle.com/java/technologies/downloads/)
