@@ -2,7 +2,30 @@
 
 ## Overview
 
-JDK 9 is released on September 22, 2017.
+[JDK 9](https://openjdk.org/projects/jdk9/) is released on September 21, 2017.
+
+Here are some JEPs about Java Platform Module System:
+
+- [JEP 200](https://openjdk.org/jeps/200): The Modular JDK
+- [JEP 201](https://openjdk.org/jeps/201): Modular Source Code
+- [JEP 220](https://openjdk.org/jeps/220): Modular Run-Time Images
+- [JEP 238](https://openjdk.org/jeps/238): Multi-Release JAR Files
+- [JEP 261](https://openjdk.org/jeps/261): Module System
+- [JEP 275](https://openjdk.org/jeps/275): Modular Java Application Packaging
+- [JEP 282](https://openjdk.org/jeps/282): jlink: The Java Linker
+
+Here are some JEPs about JVM and GC:
+
+- [JEP 158](https://openjdk.org/jeps/158): Unified JVM Logging
+- [JEP 248](https://openjdk.org/jeps/248): Make G1 the Default Garbage Collector
+- [JEP 271](https://openjdk.org/jeps/271): Unified GC Logging
+- [JEP 214](https://openjdk.org/jeps/214): Remove GC Combinations Deprecated in JDK 8
+
+Other JEPs:
+
+[JEP 222](https://openjdk.org/jeps/222): jshell: The Java Shell (Read-Eval-Print Loop)
+
+[JEP 110](https://openjdk.org/jeps/110): HTTP/2 Client (Incubator)
 
 ## New Features
 
@@ -103,7 +126,8 @@ module <module-name> {
   // 需要其他模块（静态依赖）：编译时必须存在，但运行时不一定需要，JVM解析模块时不会加载静态依赖的模块（即使不存在，也不报错）
   requires static <module-name>;  
   // 需要其他模块（静态依赖 + 传递依赖）
-  requires static transitive <module-name>;  
+  requires static transitive <module-name>; 
+    
   // 导出包：声明一个模块的包对其他模块可见
   exports <package-name>;
   // 导出包（定向导出）：限定将包导出到某些模块，其它模块不可访问。多个模块使用逗号分隔。
@@ -118,19 +142,6 @@ module <module-name> {
   opens <package-name>;
 }
 ```
-
-```shell
-java --list-modules
-java --list-modules <module-name>
-```
-
-See the [Diving Into The Modular System](https://blogs.oracle.com/java/post/diving-into-the-modular-system) for detailed information about Java Platform Module System.
-
-- [JEP 200](http://openjdk.java.net/jeps/200): The Modular JDK, which defines the modular structure
-- [JEP 201](http://openjdk.java.net/jeps/201): Modular Source Code, which modularizes the source code
-- [JEP 220](http://openjdk.java.net/jeps/220): Modular Run-Time Images, which introduces modular runtime images
-- [JEP 261](http://openjdk.java.net/jeps/261): Module System, which implement the Java Platform Module System, as specified by JSR 376, together with related JDK-specific changes and enhancements. 
-- [JEP 260](http://openjdk.java.net/jeps/260): Encapsulate Most Internal APIs. Most of the JDK's internal APIs inaccessible by default but leave a few critical, widely-used internal APIs accessible, until supported replacements exist for all or most of their functionality.
 
 ### Multi-release JAR files
 
@@ -158,10 +169,6 @@ You can use the  [`jar`](https://docs.oracle.com/javase/9/tools/jar.htm#JSWOR614
 ```shell
 jar [OPTION...] [ [--release VERSION] [-C dir] files] ...
 ```
-
-### Jlink
-
-[JEP 282](http://openjdk.java.net/jeps/282): Jlink: the Java Linker, a tool that can assemble and optimize a set of modules and their dependencies into a custom run-time image as defined in [JEP 220](http://openjdk.java.net/jeps/220).
 
 ### JShell
 
@@ -240,7 +247,7 @@ try (resource1;
 
 ## Deprecated APIs, Features, and Options
 
-## About JVM
+## JVM and GC
 
 ## Reference
 
