@@ -4,17 +4,29 @@
 
 [https://openjdk.org/jeps/0](https://openjdk.org/jeps/0)
 
-[Java](https://www.oracle.com/java/)
+[https://www.oracle.com/java/](https://www.oracle.com/java/)
 
-[Java Downloads](https://www.oracle.com/java/technologies/downloads/)
+[https://www.oracle.com/java/technologies/java-readme.html](https://www.oracle.com/java/technologies/java-readme.html)
 
-[Java Platform, Standard Edition Documentation](https://docs.oracle.com/en/java/javase/index.html)
+[https://www.oracle.com/java/technologies/downloads/](https://www.oracle.com/java/technologies/downloads/)
 
-[Java SE README Files](https://www.oracle.com/java/technologies/java-readme.html)
+[http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-[Java SE Downloads](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 
+See [Trail: Learning the Java Language - Oracle Help Center](https://docs.oracle.com/javase/tutorial/java/) for the fundamentals of programming in the Java programming language.
 
-Java Development Kit (JDK). The JDK includes the JRE.
+See [Java Platform, Standard Edition Documentation](https://docs.oracle.com/en/java/javase/index.html) for information about Java SE Versions.
+
+See [Dev.java](https://dev.java/learn/) for updated tutorials taking advantage of the latest releases.
+
+See [JDK Release Notes](https://www.oracle.com/java/technologies/javase/jdk-relnotes-index.html) for information about new features, enhancements, and removed or deprecated options for all JDK releases.
+
+Get started with Java Development Kit(JDK) by the following items:
+
+1. New Features and Enhancements
+2. Removed APIs, Features, and Options
+3. Deprecated APIs, Features, and Options
+4. JVM
+5. GC
 
 ## JCP
 

@@ -4,29 +4,6 @@
 
 [JDK 9](https://openjdk.org/projects/jdk9/) is released on September 21, 2017.
 
-Here are some JEPs about Java Platform Module System:
-
-- [JEP 200](https://openjdk.org/jeps/200): The Modular JDK
-- [JEP 201](https://openjdk.org/jeps/201): Modular Source Code
-- [JEP 220](https://openjdk.org/jeps/220): Modular Run-Time Images
-- [JEP 238](https://openjdk.org/jeps/238): Multi-Release JAR Files
-- [JEP 261](https://openjdk.org/jeps/261): Module System
-- [JEP 275](https://openjdk.org/jeps/275): Modular Java Application Packaging
-- [JEP 282](https://openjdk.org/jeps/282): jlink: The Java Linker
-
-Here are some JEPs about JVM and GC:
-
-- [JEP 158](https://openjdk.org/jeps/158): Unified JVM Logging
-- [JEP 248](https://openjdk.org/jeps/248): Make G1 the Default Garbage Collector
-- [JEP 271](https://openjdk.org/jeps/271): Unified GC Logging
-- [JEP 214](https://openjdk.org/jeps/214): Remove GC Combinations Deprecated in JDK 8
-
-Other JEPs:
-
-[JEP 222](https://openjdk.org/jeps/222): jshell: The Java Shell (Read-Eval-Print Loop)
-
-[JEP 110](https://openjdk.org/jeps/110): HTTP/2 Client (Incubator)
-
 ## New Features
 
 ### Java Platform Module System
@@ -205,6 +182,100 @@ jshell> /list -
 <再次按 Tab 可查看提要>
 ```
 
+### HTTP/2 Client
+
+[JEP 110](https://openjdk.org/jeps/110): HTTP/2 Client (Incubator)
+
+In JDK 9, the `HttpClient` API was introduced as an incubator module under the `java.net.http` package. This APl provides a modern, efficient, and feature-rich HTTP client for sending HTTP requests and receiving HTTP responses. It supports both synchronous and asynchronous programming models. The API is designed to replace the legacy `HttpURLConnection` class and provides a more modern and flexible approach to handling HTTP communications.
+
+Key Features of `HttpClient` in JDK 9
+
+1. **Synchronous and Asynchronous Requests**: Supports both blocking and non-blocking operations. Non-blocking requests using `CompletableFuture`.
+2. **HTTP/2 Support**: Provides support for HTTP/2, which allows for multiplexing multiple requests over a single connection. Automatically negotiates HTTP/2 if the server supports it.
+3. **WebSocket Support**: Includes support for WebSocket communication.
+4. **Builder Pattern**: Uses a builder pattern to create `HttpClient` and `HttpRequest` instances.
+5. **lmproved Performance**: Designed to be more efficient and performant compared to the older `HttpURLConnection`.
+5. **Customizable**: Allows configuration of timeouts, redirections, and more.
+
+Here is a simple example of how to use the HTTP Client API in JDK 9:
+
+```java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+public class HttpClientExample {
+    public static void main(String[] args) throws Exception {
+        // Create an HttpClient
+        HttpClient client = HttpClient.newHttpClient();
+
+        // Create a request
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("https://api.github.com"))
+                .GET()
+                .build();
+
+        // Send the request and get the response
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Print the response status code and body
+        System.out.println("Status code: " + response.statusCode());
+        System.out.println("Response body: " + response.body());
+    }
+}
+```
+
+The API also supports asynchronous requests using `CompletableFuture`. Here is an example:
+
+```java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
+
+public class AsyncHttp2ClientExample {
+    public static void main(String[] args) throws Exception {
+        // Create an HttpClient with HTTP/2 support
+        HttpClient client = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_2)
+                .build();
+
+        // Create a request
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("https://http2.github.io/"))
+                .GET()
+                .build();
+
+        // Send the request asynchronously
+        CompletableFuture<HttpResponse<String>> responseFuture = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        // Print the response status code and body when the response is received
+        responseFuture.thenAccept(response -> {
+            System.out.println("Status code: " + response.statusCode());
+            System.out.println("Response body: " + response.body());
+        }).join();
+    }
+}
+```
+
+**Explanation**
+
+1. **HttpClient**: The `HttpClient` class is used to create an HTTP client instance. lt can be configured with various options such as HTTP version,connection timeout, etc.
+2. **HttpRequest**: The `HttpRequest` class is used to create an HTTP request. It can be confiqured with the request method (GET, POST, etc),URL, headers, and body.
+3. **HttpResponse**: The `HttpResponse` class represents the response received from the server. It contains the status code, headers, and body of the response.
+4. **Synchronous Request**: The `send` method is used to send a synchronous request and receive the response
+4. **Asynchronous Request**: The `sendAsync` method is used to send an asynchronous request and receive the response as a `CompletableFuture`
+
+### Unified JVM and GC Logging
+
+[JEP 158](https://openjdk.org/jeps/158): Unified JVM Logging
+
+[JEP 271](https://openjdk.org/jeps/271): Unified GC Logging
+
+## Enhancements
+
 ### private methods of interfaces
 
 Private interface methods are supported. This support allows nonabstract methods of an interface to share code between them.
@@ -243,25 +314,18 @@ try (resource1;
 }
 ```
 
-## Removed APIs, Features, and Options
-
-## Deprecated APIs, Features, and Options
-
-## JVM and GC
-
 ## Reference
 
-[https://blogs.oracle.com/java/post/jdk-9-is-released](https://blogs.oracle.com/java/post/jdk-9-is-released)
+[https://openjdk.org/projects/jdk9/](https://openjdk.org/projects/jdk9/)
 
-[https://docs.oracle.com/javase/9/whatsnew/toc.htm#JSNEW-GUID-C23AFD78-C777-460B-8ACE-58BE5EA681F6](https://docs.oracle.com/javase/9/whatsnew/toc.htm#JSNEW-GUID-C23AFD78-C777-460B-8ACE-58BE5EA681F6)
+[https://docs.oracle.com/javase/9/](https://docs.oracle.com/javase/9/)
 
 [https://www.oracle.com/java/technologies/javase/9-relnotes.html](http://www.oracle.com/technetwork/java/javase/9-relnotes-3622618.html)
 
 [https://www.oracle.com/java/technologies/javase/9-all-relnotes.html](https://www.oracle.com/java/technologies/javase/9-all-relnotes.html)
 
-[https://docs.oracle.com/javase/9/](https://docs.oracle.com/javase/9/)
+[https://blogs.oracle.com/java/post/jdk-9-is-released](https://blogs.oracle.com/java/post/jdk-9-is-released)
 
 [https://javaguide.cn/java/](https://javaguide.cn/java/)
-
 
 
