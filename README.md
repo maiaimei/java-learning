@@ -62,6 +62,8 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 
 # Learn Java
 
+从语法层面、API层面、JVM、GC学习每个Java版本新增的（New）、增强的（Enhancement）、废弃的（Deprecated）、移除的（Removed）特性（Feature）和选项（Option）。
+
 [https://dev.java/learn/](https://dev.java/learn/)
 
 ## Staying Aware of New Features
@@ -74,13 +76,8 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 
   How to compile and execute the preview features available in the JDK.
 
+# Reference
 
+[The Java™ Tutorials](https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html)
 
-Get started with Java Development Kit(JDK) by the following items:
-
-1. New Features and Enhancements
-2. Removed APIs, Features, and Options
-3. Deprecated APIs, Features, and Options
-4. JVM
-5. GC
-
+[Java Language and Virtual Machine Specifications](https://docs.oracle.com/javase/specs/)
