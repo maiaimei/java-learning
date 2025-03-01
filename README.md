@@ -81,3 +81,5 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 [The Java™ Tutorials](https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html)
 
 [Java Language and Virtual Machine Specifications](https://docs.oracle.com/javase/specs/)
+
+[https://javaalmanac.io/](https://javaalmanac.io/)
