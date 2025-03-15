@@ -62,3 +62,10 @@ https://openjdk.org/jeps/430
 
 https://docs.oracle.com/javase/specs/jls/se21/preview/specs/string-templates-jls.html
 
+# Project Amber in Action
+
+Here is a picture that represents [Project Amber](http://openjdk.org/projects/amber/), the release cadence, and the preview system in action over the last few years. As you can see, many of Amber's language features started off as preview features to collect broader feedback, and sometimes made slight changes before becoming standard.
+
+![](./images/Project Amber in Action.png)
+
+[https://dev.java/evolution/](https://dev.java/evolution/)

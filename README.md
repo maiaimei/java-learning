@@ -60,6 +60,14 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 
 **Oracle Java SE Support Roadmap**: [https://www.oracle.com/java/technologies/java-se-support-roadmap.html](https://www.oracle.com/java/technologies/java-se-support-roadmap.html)
 
+# Project Amber
+
+The goal of Project Amber is to explore and incubate smaller, productivity-oriented Java language features that have been accepted as candidate JEPs in the [OpenJDK JEP Process](https://openjdk.org/jeps/1). This Project is sponsored by the [Compiler Group](https://openjdk.org/groups/compiler).
+
+Most Project Amber features go through at least two rounds of [*preview*](https://openjdk.org/jeps/12) before becoming an official part of the Java Platform. For a given feature, there are separate JEPs for each round of preview and for final standardization.
+
+[https://openjdk.org/projects/amber/](https://openjdk.org/projects/amber/)
+
 # Using Preview Features
 
 Preview features are disabled by default. To enable them, we must use the enable-preview argument, which enables all preview features at once.
