@@ -40,42 +40,25 @@ Classify the 15 JEPs in JDK21 from the perspectives of Language, API, and JVM.
 |          | 449: [Deprecate the Windows 32-bit x86 Port for Removal](https://openjdk.org/jeps/449) |
 |          | 451: [Prepare to Disallow the Dynamic Loading of Agents](https://openjdk.org/jeps/451) |
 
+# Language
 
+## String Templates
 
-JDK 21 reached [General Availability](https://openjdk.org/projects/jdk8/milestones#General_Availability) on 19 September 2023. JDK 21 is a long-term support (LTS) release, introduced several new features and enhancements. Here are some of the notable ones:
+Simplify string concatenation and enhance string readability.
 
-1. **Virtual Threads (Preview)**:
-   - Virtual threads are lightweight threads that dramatically reduce the effort of writing, maintaining, and observing high-throughput concurrent applications.
-   - Virtual threads make it easier to write scalable applications by allowing more threads to run concurrently without the overhead of traditional Java threads.
-2. **Pattern Matching for switch (Third Preview)**:
-   - This feature enhances the switch statement and expression with pattern matching, allowing more concise and readable code when handling multiple conditions.
-   - It provides a powerful way to destructure object hierarchies and perform more sophisticated data processing within switch statements.
-3. **Record Patterns (Second Preview)**:
-   - Record patterns allow you to match on the components of records in a concise and readable way.
-   - This feature is useful for decomposing record values in pattern matching constructs like switch and if statements.
-4. **Scoped Values (Incubator)**:
-   - Scoped values provide a mechanism to share immutable data within and across threads, offering an alternative to thread-local variables.
-   - They enable safer and more efficient data sharing in concurrent applications.
-5. **Sequenced Collections**:
-   - New interfaces for sequenced collections provide a unified way to handle collections that have a defined encounter order.
-   - This includes support for methods such as `getFirst()`, `getLast()`, `reversed()`, and more.
-6. **Foreign Function & Memory API (Third Preview)**:
-   - This API allows Java programs to interoperate with code and data outside of the Java runtime.
-   - It provides a safe and efficient way to access native libraries and manage off-heap memory.
-7. **Structured Concurrency (Incubator)**:
-   - Structured concurrency simplifies multi-threaded programming by treating multiple tasks running in different threads as a single unit of work.
-   - It helps to streamline error handling and cancellation.
-8. **Generational Shenandoah**:
-   - Shenandoah is a garbage collector with low pause times. The new generational mode improves performance by better handling short-lived and long-lived objects.
+A preview language feature and API.
 
-These features aim to improve the performance, scalability, and maintainability of Java applications. For more details, you can refer to the [JDK 21 release notes](https://openjdk.java.net/projects/jdk/21/).
+use --enable-preview to enable string templates.
 
+Java 目前支持三种模板处理器：
 
+- STR：自动执行字符串插值，即将模板中的每个嵌入式表达式替换为其值（转换为字符串）。
+- FMT：和 STR 类似，但是它还可以接受格式说明符，这些格式说明符出现在嵌入式表达式的左边，用来控制输出的样式。
+- RAW：不会像 STR 和 FMT 模板处理器那样自动处理字符串模板，而是返回一个 `StringTemplate` 对象，这个对象包含了模板中的文本和表达式的信息。
 
-In JDK 21, several APIs have been removed. Here are some of the notable removals:
+除了 JDK 自带的三种模板处理器外，你还可以实现 `StringTemplate.Processor` 接口来创建自己的模板处理器，只需要继承 `StringTemplate.Processor`接口，然后实现 `process` 方法即可。
 
-1. **Deprecated Methods and Classes**: Some methods and classes that were deprecated in earlier versions have been removed.
-2. **Security Manager and Related APIs**: The Security Manager and related APIs have been removed.
-3. **RMI Activation**: The RMI Activation mechanism has been removed.
+https://openjdk.org/jeps/430
 
-For a detailed list of all removed APIs, you can refer to the official JDK 21 release notes and the JEPs (JDK Enhancement Proposals) associated with the release.
+https://docs.oracle.com/javase/specs/jls/se21/preview/specs/string-templates-jls.html
+

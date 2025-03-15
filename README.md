@@ -60,6 +60,52 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 
 **Oracle Java SE Support Roadmap**: [https://www.oracle.com/java/technologies/java-se-support-roadmap.html](https://www.oracle.com/java/technologies/java-se-support-roadmap.html)
 
+# Using Preview Features
+
+Preview features are disabled by default. To enable them, we must use the enable-preview argument, which enables all preview features at once.
+
+Enable preview features in the Command Line.
+
+```shell
+# compile
+# Do not enable any preview features
+javac Example.java
+# Enable all preview features of JDK 21
+javac --release 21 --enable-preview Example.java
+# DISALLOWED
+javac --release 20 --enable-preview Example.java
+
+# Run with preview features of JDK 21
+java --enable-preview Example
+```
+
+Enable preview features in Maven.
+
+```xml
+<properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.13.0</version>
+            <configuration>
+                <source>${maven.compiler.source}</source>
+                <target>${maven.compiler.target}</target>
+                <release>${maven.compiler.release}</release>
+                <compilerArgs>--enable-preview</compilerArgs>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
 # Reference
 
 [https://dev.java/learn/](https://dev.java/learn/)
