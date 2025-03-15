@@ -60,23 +60,9 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 
 **Oracle Java SE Support Roadmap**: [https://www.oracle.com/java/technologies/java-se-support-roadmap.html](https://www.oracle.com/java/technologies/java-se-support-roadmap.html)
 
-# Learn Java
-
-从语法层面、API层面、JVM、GC学习每个Java版本新增的（New）、增强的（Enhancement）、废弃的（Deprecated）、移除的（Removed）特性（Feature）和选项（Option）。
+# Reference
 
 [https://dev.java/learn/](https://dev.java/learn/)
-
-## Staying Aware of New Features
-
-- [**Java Platform Evolution**](https://dev.java/evolution/)
-
-  Java has come a long ways since Java 8. Let's go over some of this evolution.
-
-- [**Using the Preview Features Available in the JDK**](https://dev.java/learn/new-features/using-preview/)
-
-  How to compile and execute the preview features available in the JDK.
-
-# Reference
 
 [The Java™ Tutorials](https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html)
 
