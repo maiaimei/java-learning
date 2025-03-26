@@ -36,7 +36,24 @@ JEPs通过JCP进行定义和管理。JEPs根据其发展阶段进行分类：
 
 **JVM**（Java Virtual Machine）：Java虚拟机，是一种用于计算设备的规范，通过仿真模拟各种计算机功能来实现。Java语言使用JVM屏蔽了与具体平台相关的信息，使得Java程序可以在多种平台上运行。
 
-# OpenJDK & Oracle JDK
+# OpenJDK
+
+[OpenJDK](https://openjdk.org/) has several implementations, each maintained or supported by diferent organizations.
+
+Each of these implementations adheres to the OpenJDK specifications but may include additional optimizations, support, and certifications provided by the respective organizations.
+
+The support dates for different versions of JDK provided by various organizations can vary.
+
+| Implementations                                              | Maintained by                                                | Description                                                  | JVM                            | Support Policy                                               | Downloads                                                    |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [Oracle JDK](https://www.oracle.com/java/)                   | 由Oracle公司主导。                                           | The reference implementation of the Java Platform, Standard Edition, provided by Oracle.<br />Oracle提供的Java平台标准版的参考实现。 | HotSpot<br />GraalVM(optional) | Provides upates for each release for 6 months with LTS releases receiving extended support through Oracle's commercial offerings.<br />[Oracle Java SE Support Roadmap](https://www.oracle.com/java/technologies/java-se-support-roadmap.html) | [Java Archive](https://www.oracle.com/java/technologies/downloads/archive/) |
+| [AdoptOpenJDK](https://adoptium.net)                         | AdoptOpenJDK community (now part of the Eclipse Foundation as Adoptium)<br />由AdoptOpenJDK社区主导，现在由Eclipse基金会管理，称为Eclipse Adoptium。 | Provides prebuilt OpenJDK binaries for various platforms.<br />为各种平台提供预构建的OpenJDK二进制文件。 | HotSpot<br />OpenJ9(optional)  | Typically provides updates for each LTS (Long Term Support) release for at least 4 years after the initial release.<br />[Adoptium Support](https://adoptium.net/support.htm) | [https://adoptopenjdk.net/releases.html](https://adoptopenjdk.net/releases.html)<br />[https://adoptopenjdk.net/archive.html](https://adoptopenjdk.net/archive.html) |
+| [Amazon Corretto](https://aws.amazon.com/corretto)           | 由Amazon主导。                                               | A no-cost,multiplatform, production-ready distribution of OpenJDK<br />OpenJDK的免费、多平台、生产就绪发行版 | HotSpot                        | Provides long-term suport for LTS releases, with updates for at least 8 years after the initial release.<br />[Amazon Corretto Support](https://aws.amazon.com/corretto/faqs/#support) | [https://aws.amazon.com/corretto/](https://aws.amazon.com/corretto/) |
+| [Azul Zulu](https://www.azul.com/products/core/openjdk-terms-of-use/) | 由Azul Systems主导。                                         | A certified build of OpenJDK that is available for a wide range of platforms and configurations.<br />OpenJDK的认证版本，可用于各种平台和配置。 |                                | Offers commercial support for LTS releases for at least 10 years after the initial releases.<br />[Azul Supportl](https://www.azul.com/products/azul-support-roadmap/) | [Download Azul JDKs](https://www.azul.com/downloads/#zulu)   |
+| [IBM Semeru Runtime](https://www.ibm.com/support/pages/semeru-runtimes-getting-started/) | 由IBM主导。                                                  | IBM's distribution of OpenJDK,optimized for performance and reliability.<br />IBM的OpenJDK发行版，针对性能和可靠性进行了优化。 | OpenJ9                         | Offers long-term support for LTS releases, with updates for at least 6 years after the initial release.<br />[IBM Semeru Runtimes support](https://www.ibm.com/support/pages/semeru-runtimes-support) | [IBM Semeru Runtimes Downloads](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/) |
+| [Red Hat OpenJDK](https://developers.redhat.com/products/openjdk/getting-started) | 由Red Hat主导。                                              | Red Hat's distribution of OpenJDK,which is used in Red Hat Enterprise Linux and other Red Hat products.<br />Red Hat的OpenJDK发行版，用于Red Hat Enterprise Linux和其他Red Hat产品。 | HotSpot                        | Provides long-term support for LTS releases, with updates for at least 6 years after the initial release.<br />[Red Hat OpenJDK Support](https://access.redhat.com/articles/1299013) | [Download the Red Hat Build of OpenJDK](https://developers.redhat.com/products/openjdk/download) |
+
+## OpenJDK & Oracle JDK
 
 **[OpenJDK](https://openjdk.org/)** and **Oracle JDK** are both implementations of the Java Development Kit (JDK), but they have some key differences in terms of licensing, support, performance, and features.
 
@@ -57,8 +74,6 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 **Oracle JDK** 发布地址：[https://www.oracle.com/java/technologies/javase/jdk-relnotes-index.html](https://www.oracle.com/java/technologies/javase/jdk-relnotes-index.html)
 
 **Oracle JDK** 下载地址：[https://www.oracle.com/java/technologies/downloads/archive/](https://www.oracle.com/java/technologies/downloads/archive/)
-
-**Oracle Java SE Support Roadmap**: [https://www.oracle.com/java/technologies/java-se-support-roadmap.html](https://www.oracle.com/java/technologies/java-se-support-roadmap.html)
 
 # Project Amber
 
