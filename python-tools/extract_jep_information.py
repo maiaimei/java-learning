@@ -2,6 +2,7 @@ import sys
 import requests
 import time
 import random
+import argparse
 import logging
 from bs4 import BeautifulSoup
 
@@ -58,12 +59,12 @@ def file_lines_to_dict(file_path):
                 if not line:
                     continue
                 # 按 ": " 分隔
-                parts = line.split(": ", 1)
+                parts = line.split(":", 1)
                 if len(parts) == 2:  # 确保分隔成功
                     jep = parts[0]
-                    desc = parts[1]
+                    feature = parts[1].strip()
                     url = f"https://openjdk.org/jeps/{jep}"
-                    result.append({"jep": jep, "desc": desc, "url": url})
+                    result.append({"jep": jep, "feature": feature, "url": url})
     except FileNotFoundError:
         logging.error(f"File not found: {file_path}")
     except Exception as e:
@@ -110,17 +111,46 @@ def extract_jep_component(url):
 
 def main():
     """
-    主函数：用户输入文件路径，解析文件内容并提取目标信息。
+    主函数：接收命令行参数，解析文件内容并提取目标信息。
     """
+    # 配置命令行参数解析
+    parser = argparse.ArgumentParser(description="Web Content Extractor for JEP Information")
+    # 必需参数，指定输入文件路径。
+    parser.add_argument(
+        "file_path",
+        type=str,
+        help="Path to the input file containing JEP information"
+    )
+    # 必需参数，指定 JDK 版本。
+    parser.add_argument(
+        "jdk_version",
+        type=str,
+        help="JDK Release Version (e.g., 'JDK 17', 'JDK 18', etc.)"
+    )
+    # 可选参数，指定请求最小延迟时间，默认值分别为 1.0秒。
+    parser.add_argument(
+        "--delay_min",
+        type=float,
+        default=1.0,
+        help="Minimum delay (in seconds) between requests (default: 1.0)"
+    )
+    # 可选参数，指定请求最大延迟时间，默认值分别为 5.0秒。
+    parser.add_argument(
+        "--delay_max",
+        type=float,
+        default=5.0,
+        help="Maximum delay (in seconds) between requests (default: 5.0)"
+    )
+    args = parser.parse_args()
+
+    # 日志信息
     logging.info("Welcome to the Web Content Extractor!")
     logging.info("This program extracts specific information from multiple webpages.")
-    
-    # 用户输入文件路径
-    file_path = input("Please enter the file path: ").strip()
-    logging.info(f"Processing file: {file_path}")
+    # 使用 args.file_path 获取输入文件路径。
+    logging.info(f"Processing file: {args.file_path}")
 
     # 读取文件内容并转换为字典列表, 结构为：[{'jep': '102', 'feature': 'Process API Updates', 'url': 'https://openjdk.org/jeps/102'}]
-    dict_list = file_lines_to_dict(file_path)
+    dict_list = file_lines_to_dict(args.file_path)
     logging.info(f"Loaded {len(dict_list)} entries from the file.")
 
     # 遍历字典列表并调用解析函数
@@ -129,42 +159,43 @@ def main():
         logging.info(f"Processing URL: {url}")
 
         # 随机延迟，避免频繁请求
-        delay = random.uniform(1, 5)  # 随机延迟 1 到 5 秒
+        # 使用命令行参数args.delay_min 和 args.delay_max指定的延迟范围
+        delay = random.uniform(args.delay_min, args.delay_max)  # 使用命令行参数指定的延迟范围
         logging.info(f"Waiting for {delay:.2f} seconds before making the request...")
         time.sleep(delay)  # 延迟执行
 
         result = extract_jep_component(url)
+
+        entry['release'] = args.jdk_version # 添加 JDK 版本到字典中
+        entry['link'] = f"=HYPERLINK(\"https://openjdk.org/jeps/{entry['jep']}\",\"JEP {entry['jep']}\")"  # 添加链接到字典中
         
-        # 打印结果
         if result:
             if 'Component' in result:  # 判断是否存在键 'Component'
                 entry['component'] = result['Component'].replace("\u2009", " ")  # 替换窄空格为普通空格
                 logging.info(f"Extracted Component: {entry['component']}")
-                entry['type'] = get_type_by_component(entry['component'])  # 获取组件类型并添加到字典中
-                entry['link'] = f"=HYPERLINK(\"https://openjdk.org/jeps/{entry['jep']}\",\"JEP {entry['jep']}: {entry['desc']}\")"  # 添加链接到字典中
-                entry['title'] = f"JEP {entry['jep']}: {entry['desc']}"  # 添加标题到字典中
+                entry['category'] = get_category_by_component(entry['component'])  # 获取组件类型并添加到字典中
             else:
                 # 如果 'Component' 不存在，执行其他逻辑
                 logging.warning(f"'Component' key not found in the result for URL: {url}")
                 entry['component'] = ""  # 设置默认值
-                entry['type'] = "Other"  # 设置默认类型
-                entry['link'] = f"=HYPERLINK(\"https://openjdk.org/jeps/{entry['jep']}\",\"JEP {entry['jep']}: {entry['desc']}\")"  # 添加链接
-                entry['title'] = f"JEP {entry['jep']}: {entry['desc']}"  # 添加标题
+                entry['category'] = "Other"  # 设置默认类型
         else:
             logging.warning(f"No relevant information found for URL: {url}")
 
     # 对 dict_list 进行排序
-    dict_list.sort(key=lambda x: (x.get('type', ''), x.get('component', ''), x.get('title', '')))
+    dict_list.sort(key=lambda x: (x.get('type', ''), x.get('component', ''), x.get('jep', '')))
     
     # 打印结果
-    print("~".join(['Type', 'Component', 'JEP', 'Feature', 'Link', 'Title']))  # 打印表头
+    print("~".join(['Release', 'Category', 'Component', 'Feature', 'Link']))  # 打印表头
     for entry in dict_list:
-        print("~".join(str(entry.get(key, "")) for key in ['type', 'component', 'jep', 'desc', 'link', 'title']))
+        print("~".join(str(entry.get(key, "")) for key in ['release', 'category', 'component', 'feature', 'link']))
 
 # 处理不同的组件类型
-def get_type_by_component(component):
+def get_category_by_component(component):
     if component == 'core-libs / java.lang':
         return "Language"
+    elif component == "specification / language":
+        return "Language"    
     elif component.startswith("core-libs"):
         return "API"
     elif component.startswith("security-libs"):

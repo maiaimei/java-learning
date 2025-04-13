@@ -186,3 +186,7 @@ Enable preview features in Maven.
 [Java Language and Virtual Machine Specifications](https://docs.oracle.com/javase/specs/)
 
 [https://javaalmanac.io/](https://javaalmanac.io/)
+
+[https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/](https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/)
+
+[https://jeps.dev/blog](https://jeps.dev/blog)

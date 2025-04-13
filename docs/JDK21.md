@@ -20,26 +20,6 @@ Java moved to a 6-month, time-based release cadence in 2017 with a new feature r
 
 [https://openjdk.org/](https://openjdk.org/)
 
-Classify the 15 JEPs in JDK21 from the perspectives of Language, API, and JVM.
-
-| Category | JEPs                                                         |
-| -------- | ------------------------------------------------------------ |
-| Language | 430: [String Templates (Preview)](https://openjdk.org/jeps/430) |
-|          | 440: [Record Patterns](https://openjdk.org/jeps/440)         |
-|          | 441: [Pattern Matching for switch](https://openjdk.org/jeps/441) |
-|          | 443: [Unnamed Patterns and Variables (Preview)](https://openjdk.org/jeps/443) |
-|          | 445: [Unnamed Classes and Instance Main Methods (Preview)](https://openjdk.org/jeps/445) |
-| API      | 442: [Foreign Function & Memory API (Third Preview)](https://openjdk.org/jeps/442) |
-|          | 446: [Scoped Values (Preview)](https://openjdk.org/jeps/446) |
-|          | 448: [Vector API (Sixth Incubator)](https://openjdk.org/jeps/448) |
-|          | 452: [Key Encapsulation Mechanism API](https://openjdk.org/jeps/452) |
-|          | 453: [Structured Concurrency (Preview)](https://openjdk.org/jeps/453) |
-| JVM      | 431: [Sequenced Collections](https://openjdk.org/jeps/431)   |
-|          | 439: [Generational ZGC](https://openjdk.org/jeps/439)        |
-|          | 444: [Virtual Threads](https://openjdk.org/jeps/444)         |
-|          | 449: [Deprecate the Windows 32-bit x86 Port for Removal](https://openjdk.org/jeps/449) |
-|          | 451: [Prepare to Disallow the Dynamic Loading of Agents](https://openjdk.org/jeps/451) |
-
 # Language
 
 ## String Templates
