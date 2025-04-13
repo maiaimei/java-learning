@@ -137,13 +137,19 @@ def main():
         
         # 打印结果
         if result:
-            for key, value in result.items():
-                if key == 'Component':
-                    entry['component'] = value.replace("\u2009", " ")  # 将提取的 Component 信息且替换窄空格为普通空格再添加到字典中
-                    logging.info(f"Extracted Component: {entry['component']}")
-                    entry['type'] = get_type_by_component(entry['component'])  # 获取组件类型并添加到字典中
-                    entry['link'] = f"=HYPERLINK(\"https://openjdk.org/jeps/{entry['jep']}\",\"JEP {entry['jep']}: {entry['desc']}\")" # 添加链接到字典中
-                    entry['title'] = f"JEP {entry['jep']}: {entry['desc']}" # 添加标题到字典中
+            if 'Component' in result:  # 判断是否存在键 'Component'
+                entry['component'] = result['Component'].replace("\u2009", " ")  # 替换窄空格为普通空格
+                logging.info(f"Extracted Component: {entry['component']}")
+                entry['type'] = get_type_by_component(entry['component'])  # 获取组件类型并添加到字典中
+                entry['link'] = f"=HYPERLINK(\"https://openjdk.org/jeps/{entry['jep']}\",\"JEP {entry['jep']}: {entry['desc']}\")"  # 添加链接到字典中
+                entry['title'] = f"JEP {entry['jep']}: {entry['desc']}"  # 添加标题到字典中
+            else:
+                # 如果 'Component' 不存在，执行其他逻辑
+                logging.warning(f"'Component' key not found in the result for URL: {url}")
+                entry['component'] = ""  # 设置默认值
+                entry['type'] = "Other"  # 设置默认类型
+                entry['link'] = f"=HYPERLINK(\"https://openjdk.org/jeps/{entry['jep']}\",\"JEP {entry['jep']}: {entry['desc']}\")"  # 添加链接
+                entry['title'] = f"JEP {entry['jep']}: {entry['desc']}"  # 添加标题
         else:
             logging.warning(f"No relevant information found for URL: {url}")
 
