@@ -187,6 +187,9 @@ Enable preview features in Maven.
 
 [https://javaalmanac.io/](https://javaalmanac.io/)
 
+[https://javaalmanac.io/features/](https://javaalmanac.io/features/)
+
 [https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/](https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/)
 
 [https://jeps.dev/blog](https://jeps.dev/blog)
+

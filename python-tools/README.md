@@ -15,6 +15,6 @@ pip freeze > requirements.txt
 ```shell
 python extract_jep_component.py
 
-python extract_jep_information.py "C:/Users/lenovo/Desktop/jeps.txt" "JDK 15"
+python extract_jep_information.py "C:/Users/lenovo/Desktop/jeps.txt" "JDK 24"
 ```
 
