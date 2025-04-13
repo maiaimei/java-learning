@@ -1,5 +1,7 @@
 import sys
 import requests
+import time
+import random
 import logging
 from bs4 import BeautifulSoup
 
@@ -59,9 +61,9 @@ def file_lines_to_dict(file_path):
                 parts = line.split(": ", 1)
                 if len(parts) == 2:  # 确保分隔成功
                     jep = parts[0]
-                    feature = parts[1]
+                    desc = parts[1]
                     url = f"https://openjdk.org/jeps/{jep}"
-                    result.append({"jep": jep, "feature": feature, "url": url})
+                    result.append({"jep": jep, "desc": desc, "url": url})
     except FileNotFoundError:
         logging.error(f"File not found: {file_path}")
     except Exception as e:
@@ -125,6 +127,12 @@ def main():
     for entry in dict_list:
         url = entry['url']
         logging.info(f"Processing URL: {url}")
+
+        # 随机延迟，避免频繁请求
+        delay = random.uniform(1, 5)  # 随机延迟 1 到 5 秒
+        logging.info(f"Waiting for {delay:.2f} seconds before making the request...")
+        time.sleep(delay)  # 延迟执行
+
         result = extract_jep_component(url)
         
         # 打印结果
@@ -133,13 +141,36 @@ def main():
                 if key == 'Component':
                     entry['component'] = value.replace("\u2009", " ")  # 将提取的 Component 信息且替换窄空格为普通空格再添加到字典中
                     logging.info(f"Extracted Component: {entry['component']}")
+                    entry['type'] = get_type_by_component(entry['component'])  # 获取组件类型并添加到字典中
+                    entry['link'] = f"=HYPERLINK(\"https://openjdk.org/jeps/{entry['jep']}\",\"JEP {entry['jep']}: {entry['desc']}\")" # 添加链接到字典中
+                    entry['title'] = f"JEP {entry['jep']}: {entry['desc']}" # 添加标题到字典中
         else:
             logging.warning(f"No relevant information found for URL: {url}")
 
-    # 打印最终结果
-    logging.info("Final Results:")
+    # 对 dict_list 进行排序
+    dict_list.sort(key=lambda x: (x.get('type', ''), x.get('component', ''), x.get('title', '')))
+    
+    # 打印结果
+    print("~".join(['Type', 'Component', 'JEP', 'Feature', 'Link', 'Title']))  # 打印表头
     for entry in dict_list:
-        print(entry)
+        print("~".join(str(entry.get(key, "")) for key in ['type', 'component', 'jep', 'desc', 'link', 'title']))
+
+# 处理不同的组件类型
+def get_type_by_component(component):
+    if component == 'core-libs / java.lang':
+        return "Language"
+    elif component.startswith("core-libs"):
+        return "API"
+    elif component.startswith("security-libs"):
+        return "API"
+    elif component == 'hotspot / gc':
+        return "GC"   
+    elif component.startswith("hotspot"):
+        return "JVM"
+    elif component.startswith("tools"):
+        return "Tool"
+    else:
+        return "Other"
 
 if __name__ == "__main__":
     main()
