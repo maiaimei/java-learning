@@ -1,10 +1,10 @@
 # Records
 
+Records were intended to provide a concise way to define immutable data carriers.
+
 ## JEP 359: Records (Preview) - JDK 14
 
 Records were proposed by [JEP 359](https://openjdk.java.net/jeps/359) and delivered in [JDK 14](https://openjdk.java.net/projects/jdk/14) as a preview language feature.
-
-Records were intended to provide a concise way to define immutable data carriers.
 
 Consider your typical `Point` class that represents a point on a plane, with an x and a y coordinate.
 
