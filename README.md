@@ -181,15 +181,17 @@ Enable preview features in Maven.
 
 [https://openjdk.org/](https://openjdk.org/)
 
+[https://javaalmanac.io/](https://javaalmanac.io/)
+
+[https://javaalmanac.io/jdk/](https://javaalmanac.io/jdk/)
+
+[https://javaalmanac.io/features/](https://javaalmanac.io/features/)
+
 [https://dev.java/learn/](https://dev.java/learn/)
 
 [The Java™ Tutorials](https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html)
 
 [Java Language and Virtual Machine Specifications](https://docs.oracle.com/javase/specs/)
-
-[https://javaalmanac.io/](https://javaalmanac.io/)
-
-[https://javaalmanac.io/features/](https://javaalmanac.io/features/)
 
 [https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/](https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/)
 
