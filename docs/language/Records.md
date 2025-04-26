@@ -83,7 +83,8 @@ Records were refined by [JEP 384](https://openjdk.java.net/jeps/384) and deliver
 Records work well with *sealed types* ([JEP 360](https://openjdk.java.net/jeps/360)).
 
 ```java
-public sealed interface Expr permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
+public sealed interface Expr 
+    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
 
 public record ConstantExpr(int i)       implements Expr {...}
 public record PlusExpr(Expr a, Expr b)  implements Expr {...}
