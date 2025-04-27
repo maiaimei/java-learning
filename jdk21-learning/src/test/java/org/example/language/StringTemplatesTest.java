@@ -1,4 +1,4 @@
-package org.example;
+package org.example.language;
 
 import static java.lang.StringTemplate.RAW;
 import static java.util.FormatProcessor.FMT;
