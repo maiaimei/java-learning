@@ -41,6 +41,7 @@
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
           <release>${maven.compiler.release}</release>
+          <enablePreview>true</enablePreview>
           <compilerArgs>--enable-preview</compilerArgs>
         </configuration>
       </plugin>
