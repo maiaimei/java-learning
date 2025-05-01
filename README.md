@@ -189,9 +189,11 @@ Enable preview features in Maven.
 
 [https://dev.java/learn/](https://dev.java/learn/)
 
-[The Java™ Tutorials](https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html)
+[https://docs.oracle.com/en/java/javase/](https://docs.oracle.com/en/java/javase/)
 
-[Java Language and Virtual Machine Specifications](https://docs.oracle.com/javase/specs/)
+[https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html](https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html)
+
+[https://docs.oracle.com/javase/specs/](https://docs.oracle.com/javase/specs/)
 
 [https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/](https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-21/)
 
