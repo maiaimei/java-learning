@@ -37,6 +37,12 @@ ZGC是实验性特性，默认情况下构建系统不会包含它。Oracle生�
 
 ## JEP 376: ZGC: Concurrent Thread-Stack Processing - JDK 16
 
+将ZGC 线程栈处理从**安全点（Safepoints）**移至并发阶段。
+
+为了进行垃圾回收，需要所有的线程都暂停下来，这个暂停的时间我们成为 **Stop The World**。
+
+为了实现 STW 这个操作， JVM 需要为每个线程选择一个点停止运行，这个点就叫做**安全点（Safepoints）**。
+
 ## JEP 439: Generational ZGC - JDK 21
 
 启用非分代ZGC：`-XX:+UseZGC`
