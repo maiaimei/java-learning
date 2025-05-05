@@ -2,199 +2,176 @@
 
 ## JEP 429: Scoped Values (Incubator) - JDK 20
 
-1. Core Purpose: 核心目的：
+作用域值（Scoped Values），允许在线程内部和跨线程之间安全共享不可变数据。与线程局部变量相比，作用域值更适合在大量虚拟线程的场景中使用。此为孵化阶段API。
 
-- Provides a way to safely share immutable data within and across threads 提供一种在线程内部和跨线程间安全共享不可变数据的方式
-- Better alternative to `ThreadLocal` variables, especially for virtual threads 作为 `ThreadLocal` 变量的更好替代方案，特别是在虚拟线程场景下
+`ThreadLocal`存在以下问题：
 
-2. Basic Usage: 基本用法：
+1. **无约束可变性**：任何线程均可修改`ThreadLocal`值，导致数据流难以追踪。
+2. **无界生命周期**：线程结束后`ThreadLocal`值可能仍驻留内存，引发内存泄漏。
+3. **继承开销**：子线程默认继承父线程的`ThreadLocal`值，大量线程时内存占用显著增加。
 
+虚拟线程是由JDK实现的轻量级线程，多个虚拟线程可以共享同一个操作系统线程，从而支持海量并发。
+
+虚拟线程是`Thread`的实例，它们可以拥有线程局部变量；事实上，虚拟线程的短生命周期和非池化特性使得长期内存泄漏问题不再那么突出。（当线程快速终止时，无需调用线程局部变量的`remove()`方法，因为线程终止会自动清理其线程局部变量。）然而，如果一百万个虚拟线程各自持有可变的线程局部变量，内存占用可能会显著增加。
+
+具有线程局部变量的 Web 框架示例
 ```java
-// Creating a scoped value // 创建作用域值
-final static ScopedValue<String> USER_ID = ScopedValue.newInstance();
-
-// Using scoped value // 使用作用域值
-void processRequest() {
-    ScopedValue.where(USER_ID, "user-123")
-        .run(() -> {
-            // Value available in this scope // 在这个作用域内可以访问该值
-            handleRequest();
-            performOperation();
-        });
-}
-
-void performOperation() {
-    // Access the value anywhere in the call chain // 在调用链的任何位置访问该值
-    String userId = USER_ID.get();
-    // Use userId...
-}
-```
-
-3. Real-world Example (Web Framework): Web框架实例：
-
-```java
+/**
+ * 1. 使用ThreadLocal确保每个请求线程都有其独立的用户权限上下文
+ * 2. 在处理请求时设置用户权限级别
+ * 3. 在需要访问数据库时进行权限检查
+ * 4. 这种设计模式有助于实现线程安全的权限管理，适用于多线程web服务器环境
+ */
 class Server {
-    // Define scoped value for Principal // 定义用于Principal的作用域值
-    final static ScopedValue<Principal> PRINCIPAL = ScopedValue.newInstance();
+    // 使用ThreadLocal存储Principal对象，确保线程安全
+    // 每个线程都有自己独立的Principal实例，避免线程间互相影响
+    final static ThreadLocal<Principal> PRINCIPAL = new ThreadLocal<>();  // (1)
 
     void serve(Request request, Response response) {
-        var level = request.isAuthorized() ? ADMIN : GUEST;
+        // 根据请求的授权状态确定用户级别(ADMIN或GUEST)
+        var level     = (request.isAuthorized() ? ADMIN : GUEST);
+        // 创建新的Principal对象，包含用户权限级别
         var principal = new Principal(level);
-        
-        // Bind the principal for this request // 为这个请求绑定principal
-        ScopedValue.where(PRINCIPAL, principal)
-                  .run(() -> Application.handle(request, response));
+        // 将principal对象存储在当前线程的ThreadLocal中
+        PRINCIPAL.set(principal);                                         // (2)
+        // 调用应用程序处理请求
+        Application.handle(request, response);
     }
 }
 
 class DBAccess {
     DBConnection open() {
-        // Access principal anywhere in the call chain // 在调用链的任何位置访问principal
-        var principal = Server.PRINCIPAL.get();
-        if (!principal.canOpen()) {
-            throw new InvalidPrincipalException();
-        }
-        return newConnection();
+        // 从当前线程的ThreadLocal中获取Principal对象
+        var principal = Server.PRINCIPAL.get();                           // (3)
+        // 检查用户是否有权限打开数据库连接
+        if (!principal.canOpen()) throw new InvalidPrincipalException();
+        // 如果权限验证通过，创建并返回新的数据库连接
+        return newConnection(...);                                        // (4)
     }
 }
 ```
+作用域值（Scoped Values）允许数据在大型程序的组件之间安全高效地共享，而无需依赖方法参数。它是一个`ScopedValue`类型的变量。通常将其声明为`final static`字段，以便多个组件轻松访问。与线程局部变量类似，作用域值具有多个实例（每个线程一个），具体使用的实例取决于调用其方法的线程。但与线程局部变量不同，作用域值一旦写入后便不可变，且仅在当前线程执行期间的有限时间段内可用。
 
-4. Rebinding Example: 重新绑定示例：
+具有作用域值的 Web 框架示例
 
 ```java
+/**
+ * 1. 使用ScopedValue替代传统的ThreadLocal，提供了更严格的作用域控制
+ * 2. 在处理请求时创建一个特定的作用域，并在该作用域内执行业务逻辑
+ * 3. 确保权限信息只能在正确的上下文中访问
+ * 4. 这种实现方式比ThreadLocal更安全，因为它强制了变量的作用域边界
+ */
+class Server {
+    // 声明一个静态的ScopedValue实例，用于存储Principal对象
+    // ScopedValue是Java新特性，提供了一种更安全的线程局部变量机制
+    final static ScopedValue<Principal> PRINCIPAL = ScopedValue.newInstance(); // (1)
+
+    void serve(Request request, Response response) {
+        // 根据请求判断用户权限级别(ADMIN或GUEST)
+        var level = (request.isAdmin() ? ADMIN : GUEST);
+        // 创建新的Principal对象，包含用户权限信息
+        var principal = new Principal(level);
+        // 使用ScopedValue.where创建一个新的作用域，并在该作用域内运行处理逻辑
+        // 这确保principal对象只在特定作用域内可访问
+        ScopedValue.where(PRINCIPAL, principal)                            // (2)
+                   .run(() -> Application.handle(request, response));
+    }
+}
+
+class DBAccess {
+    DBConnection open() {
+        // 从当前作用域获取Principal对象
+        // 如果在作用域外调用会抛出异常，提供了额外的安全保障
+        var principal = Server.PRINCIPAL.get();                            // (3)
+        // 验证用户是否具有打开数据库连接的权限
+        if (!principal.canOpen()) throw new InvalidPrincipalException();
+        // 权限验证通过后，创建并返回新的数据库连接
+        return newConnection(...);                                         // (4)
+    }
+}
+```
+作用域值的重新绑定
+
+```java
+/**
+ * 1. 使用访客权限执行日志记录，确保最小权限原则
+ * 2. 利用ScopedValue创建独立的作用域，避免干扰现有的权限上下文
+ * 3. 在特定作用域内安全地执行日志消息格式化
+ * 4. 整体设计确保了日志记录过程的安全性和隔离性
+ */
 class Logger {
     void log(Supplier<String> formatter) {
         if (loggingEnabled) {
-            // Create guest principal for logging // 创建访客权限的principal
-            var guest = Principal.createGuest();
-            
-            // Rebind principal for logging operation // 为日志操作重新绑定principal
-            var message = ScopedValue.where(Server.PRINCIPAL, guest)
-                                   .call(() -> formatter.get());
-                                   
+            // 创建一个访客权限的Principal对象
+            var guest = Principal.createGuest();                      // (1)
+
+            // 使用ScopedValue.where创建一个新的作用域
+            // 在这个作用域中，将Server.PRINCIPAL绑定到guest对象
+            var message = ScopedValue.where(Server.PRINCIPAL, guest)  // (2)
+                            // 在新作用域中执行formatter.get()获取日志消息
+                            // 使用lambda表达式确保在正确的作用域内执行格式化操作
+                            .call(() -> formatter.get());             // (3)
+
+            // 将格式化后的日志消息写入日志文件
+            // 包含时间戳和消息内容
             write(logFile, "%s %s".format(timeStamp(), message));
         }
     }
 }
 ```
 
-5. Structured Concurrency Integration: 结构化并发集成：
+用户代码创建虚拟线程的首选机制是结构化并发API（JEP 428），具体通过`StructuredTaskScope`类实现。使用`StructuredTaskScope`创建的子线程会自动继承父线程的作用域值。子线程中的代码可以直接使用父线程中绑定的作用域值，且开销极低。与线程本地变量不同，此过程不会将父线程的作用域值绑定复制到子线程。
 
 ```java
+/**
+ * 1. 使用StructuredTaskScope管理并发任务，提供了更好的错误处理和资源管理
+ * 2. 通过fork方法并行执行多个任务，提高程序效率
+ * 3. 确保所有任务要么全部成功，要么在出现错误时全部终止
+ * 4. 在并发环境中安全地处理数据库连接和权限验证
+ */
 class Application {
+    // 处理请求的方法，可能抛出ExecutionException和InterruptedException异常
     Response handle() throws ExecutionException, InterruptedException {
+        // 创建一个StructuredTaskScope实例，使用ShutdownOnFailure策略
+        // 当任何任务失败时，会关闭所有其他任务
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            // Principal automatically inherited by child threads // Principal自动被子线程继承
-            Future<String> user = scope.fork(() -> findUser());
-            Future<Integer> order = scope.fork(() -> fetchOrder());
+            // 异步执行findUser()方法获取用户信息
+            // fork()方法会创建一个新的子任务并立即开始执行
+            Future<String>  user  = scope.fork(() -> findUser());          // (1)
             
-            scope.join().throwIfFailed();
+            // 异步执行fetchOrder()方法获取订单信息
+            // 与获取用户信息的任务并行执行
+            Future<Integer> order = scope.fork(() -> fetchOrder());        // (2)
+            
+            // 等待所有子任务完成
+            // throwIfFailed()会在任何任务失败时抛出异常
+            scope.join().throwIfFailed();  // Wait for both forks
+            
+            // 创建并返回包含用户信息和订单信息的响应对象
+            // resultNow()方法用于获取已完成任务的结果
             return new Response(user.resultNow(), order.resultNow());
         }
     }
-    
+
+    // 查找用户信息的方法
     String findUser() {
-        // Can access PRINCIPAL.get() here in child thread // 可以在子线程中访问 PRINCIPAL.get()
-        return DBAccess.open().queryUser();
-    }
-}
-```
-
-6. Comparison with `ThreadLocal`: 与`ThreadLocal`比较：
-
-```java
-// Old way with ThreadLocal // 旧方式：使用ThreadLocal
-class Server {
-    final static ThreadLocal<Principal> principal = new ThreadLocal<>();
-    
-    void serve(Request request) {
-        principal.set(new Principal(level));
-        try {
-            handleRequest();
-        } finally {
-            principal.remove(); // Must clean up // 必须手动清理
-        }
+        // 打开数据库连接并执行查询操作
+        ... DBAccess.open() ...                                            // (3)
     }
 }
 
-// New way with ScopedValue // 新方式：使用ScopedValue
-class Server {
-    final static ScopedValue<Principal> PRINCIPAL = ScopedValue.newInstance();
-    
-    void serve(Request request) {
-        ScopedValue.where(PRINCIPAL, new Principal(level))
-                  .run(() -> handleRequest());
-        // Automatic cleanup // 自动清理
+class DBAccess {
+    // 打开数据库连接的方法
+    DBConnection open() {
+        // 获取当前线程的权限信息
+        var principal = Server.PRINCIPAL.get();                            // (4)
+        // 验证用户是否有权限打开数据库连接
+        if (!principal.canOpen()) throw new  InvalidPrincipalException();
+        // 创建并返回新的数据库连接
+        return newConnection(...);
     }
 }
 ```
-
-7. Key Benefits: 主要优势：
-
-```java
-// 1. Immutability // 1. 不可变性
-final static ScopedValue<User> CURRENT_USER = ScopedValue.newInstance();
-// Value can't be modified once bound // 一旦绑定，值就不能被修改
-
-// 2. Bounded Lifetime // 2. 有界生命周期
-ScopedValue.where(CURRENT_USER, user)
-          .run(() -> {
-              // Value only available within this scope // 值只在这个作用域内可用
-          });
-
-// 3. Inheritance in Virtual Threads // 3. 虚拟线程中的继承
-try (var scope = new StructuredTaskScope<>()) {
-    // Values automatically inherited by child threads // 值自动被子线程继承
-    scope.fork(() -> task1());
-    scope.fork(() -> task2());
-}
-```
-
-8. Best Practices: 最佳实践：
-
-```java
-// 1. Declare as static final // 1. 声明为静态final
-public final static ScopedValue<Context> CONTEXT = ScopedValue.newInstance();
-
-// 2. Handle missing values // 2. 处理值不存在的情况
-void process() {
-    try {
-        var context = CONTEXT.get();
-    } catch (NoSuchElementException e) {
-        // Handle case when value not bound
-    }
-}
-
-// 3. Use try-with-resources for structured concurrency // 3. 使用try-with-resources进行结构化并发
-try (var scope = new StructuredTaskScope<>()) {
-    // Work with scoped values
-}
-```
-
-9. Key Points: 关键特点：
-
-- Values are immutable once bound 值一旦绑定就不可变
-- Automatic cleanup when scope ends 作用域结束时自动清理
-- Efficient inheritance in virtual threads 在虚拟线程中高效继承
-- Type-safe access 类型安全的访问
-- Clear visibility of data flow 清晰的数据流向
-- Better memory characteristics than `ThreadLocal` 比 `ThreadLocal` 有更好的内存特性
-
-10. 使用场景：
-
-- Web应用中的请求上下文
-- 安全认证信息传递
-- 分布式追踪
-- 事务上下文
-- 日志上下文
-
-11. 注意事项：
-
-- 作用域值应该是不可变的
-- 避免在作用域值中存储大量数据
-- 注意处理值不存在的情况
-- 合理规划作用域范围
-- 考虑线程继承的影响
 
 ## JEP 446: Scoped Values (Preview) - JDK 21
 
@@ -853,3 +830,23 @@ public class ExceptionHandlingExample {
     }
 }
 ```
+
+## ThreadLocal（线程本地变量）和ScopedValue（作用域值）的应用场景
+
+ThreadLocal（线程本地变量）的适用场景：
+
+- 使用传统的线程模型
+- 需要可变的线程特定状态（例如调用栈深处的代码通过 `ThreadLocal.set(...)` 向远端调用者传递数据）
+- 需要长期存储线程状态
+- 处理遗留系统集成
+
+ScopedValue（作用域值）的适用场景：
+
+- 使用虚拟线程和结构化并发
+- 需要不可变的上下文传递（单向传递不变数据）
+- 需要明确的作用域边界
+- 希望自动化资源清理
+
+新项目优先考虑使用ScopedValue，除非有特殊需求
+
+选择时要考虑项目特点、并发模型和维护需求
