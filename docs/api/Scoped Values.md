@@ -175,234 +175,38 @@ class DBAccess {
 
 ## JEP 446: Scoped Values (Preview) - JDK 21
 
-Key changes from JEP 429 (Scoped Values Incubator) to JEP 446 (Scoped Values Preview):
+Scoped Values 在 JDK 20 中通过 JEP 429 提案进入孵化阶段。在 JDK 21 中，该功能不再处于孵化状态，转而成为预览 API。
 
-1. API Status Change:
+以下比对基于Oracle Open JDK 20和Oracle Open JDK 21：
 
-```java
-// JEP 429 - Incubator API
-// Required incubator module
-requires jdk.incubator.concurrent;
-
-// JEP 446 - Preview API
-// Now part of java.base module
-import java.lang.runtime.ScopedValue;
-```
-
-2. Core API Refinements:
+包名变化：
 
 ```java
-// JEP 429
-final static ScopedValue<String> VALUE = ScopedValue.newInstance();
+// JDK 20 (JEP 429)
+jdk.incubator.concurrent.ScopedValue
 
-// JEP 446 - More explicit API
-public class Example {
-    // Creation remains the same
-    private final static ScopedValue<String> VALUE = ScopedValue.newInstance();
-    
-    // Enhanced where() method with multiple bindings
-    void process() {
-        ScopedValue.where(VALUE, "data")
-                  .where(OTHER_VALUE, "other")
-                  .run(() -> doWork());
-    }
-    
-    // New callWhere() method for convenience
-    String compute() {
-        return ScopedValue.callWhere(VALUE, "data", () -> {
-            return processWithValue();
-        });
-    }
-}
+// JDK 21 (JEP 446)
+java.lang.ScopedValue
 ```
 
-3. Improved Error Handling:
+where方法的变化：
 
 ```java
-// JEP 446 adds clearer exception handling
-try {
-    String value = VALUE.get();
-} catch (NoSuchElementException e) {
-    // More predictable exception behavior
-    // Better documentation on when exceptions occur
-}
+// JDK 20 (JEP 429)
+static <T> Carrier where(ScopedValue<T> key, T value)
+static <T, R> R where(ScopedValue<T> key, T value, Callable<? extends R> op) throws Exception
+static <T> void where(ScopedValue<T> key, T value, Runnable op)
+
+// JDK 21 (JEP 446)
+static <T> Carrier where(ScopedValue<T> key, T value)
+static <T, R> R callWhere(ScopedValue<T> key, T value, Callable<? extends R> op) throws Exception
+static <T> void runWhere(ScopedValue<T> key, T value, Runnable op)
+static <T, R> R getWhere(ScopedValue<T> key, T value, Supplier<? extends R> op)
 ```
-
-4. Enhanced Thread Integration:
-
-```java
-// Better integration with structured concurrency
-try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-    // Clearer semantics for inheritance
-    scope.fork(() -> {
-        // Values automatically inherited
-        String value = VALUE.get();
-        return processData(value);
-    });
-    
-    scope.join();
-}
-```
-
-5. Performance Improvements:
-
-```java
-// JEP 446 optimizes common patterns
-public class OptimizedExample {
-    private static final ScopedValue<Context> CONTEXT = ScopedValue.newInstance();
-    
-    public void optimizedProcess() {
-        // More efficient binding and access
-        ScopedValue.where(CONTEXT, new Context())
-                  .run(() -> {
-                      // Optimized access pattern
-                      Context ctx = CONTEXT.get();
-                      // Use context...
-                  });
-    }
-}
-```
-
-6. Documentation Clarifications:
-
-```java
-// JEP 446 provides clearer guidance
-public class BestPractices {
-    // 1. Proper declaration
-    private static final ScopedValue<State> STATE = ScopedValue.newInstance();
-    
-    // 2. Clear scope boundaries
-    public void process() {
-        ScopedValue.where(STATE, new State())
-                  .run(() -> {
-                      // Clear documentation on lifetime
-                      // Better guidance on inheritance
-                      doWork();
-                  });
-    }
-}
-```
-
-7. Security Enhancements:
-
-```java
-public class SecurityExample {
-    private static final ScopedValue<SecurityContext> SECURITY = ScopedValue.newInstance();
-    
-    public void secureOperation() {
-        // JEP 446 provides better security guarantees
-        SecurityContext ctx = createSecurityContext();
-        ScopedValue.where(SECURITY, ctx)
-                  .run(() -> {
-                      // Improved immutability guarantees
-                      performSecureOperation();
-                  });
-    }
-}
-```
-
-8. Key Changes Summary:
-
-```java
-// 1. Status Change
-// - Moved from incubator to preview
-// - Part of java.base module
-
-// 2. API Improvements
-// - Enhanced where() method
-// - New convenience methods
-// - Better error handling
-
-// 3. Performance
-// - Optimized common patterns
-// - Better thread inheritance
-
-// 4. Documentation
-// - Clearer usage guidelines
-// - Better examples
-// - More detailed specifications
-
-// 5. Security
-// - Stronger guarantees
-// - Better immutability
-```
-
-9. Migration Example:
-
-```java
-// JEP 429
-import jdk.incubator.concurrent.ScopedValue;
-
-class OldCode {
-    static final ScopedValue<String> OLD = ScopedValue.newInstance();
-    
-    void oldMethod() {
-        ScopedValue.where(OLD, "value").run(() -> {
-            // Old pattern
-        });
-    }
-}
-
-// JEP 446
-import java.lang.runtime.ScopedValue;
-
-class NewCode {
-    static final ScopedValue<String> NEW = ScopedValue.newInstance();
-    
-    void newMethod() {
-        // New pattern with improved API
-        ScopedValue.where(NEW, "value")
-                  .where(OTHER, "other")
-                  .run(() -> {
-                      // Enhanced functionality
-                  });
-    }
-}
-```
-
-10. Best Practices Updates:
-
-```java
-public class UpdatedBestPractices {
-    // 1. Declare as private when possible
-    private static final ScopedValue<Context> CONTEXT = ScopedValue.newInstance();
-    
-    // 2. Use structured concurrency
-    public void structuredOperation() {
-        try (var scope = new StructuredTaskScope<>()) {
-            ScopedValue.where(CONTEXT, new Context())
-                      .run(() -> {
-                          // Better structured approach
-                          scope.fork(() -> task1());
-                          scope.fork(() -> task2());
-                          scope.join();
-                      });
-        }
-    }
-    
-    // 3. Handle errors appropriately
-    public void errorHandling() {
-        try {
-            Context ctx = CONTEXT.get();
-        } catch (NoSuchElementException e) {
-            // Better error handling guidance
-        }
-    }
-}
-```
-
-The main themes of changes in JEP 446 are:
-
-1. API Maturity
-2. Better Integration
-3. Performance Optimization
-4. Enhanced Security
-5. Clearer Documentation
-6. Improved Error Handling
 
 ## JEP 464: Scoped Values (Second Preview) - JDK 22
 
-Scoped values incubated in JDK 20 via [JEP 429](https://openjdk.org/jeps/429) and became a preview API in JDK 21 via [JEP 446](https://openjdk.org/jeps/446). We here propose to re-preview the API in JDK 22, without change, in order to gain additional experience and feedback.
+Scoped Values 在 JDK 20 中通过 JEP 429 进行孵化，并在 JDK 21 中通过 JEP 446 成为预览 API。我们在此建议在 JDK 22 中重新将此 API 作为预览 API（保持不变），以便获取更多实践经验和用户反馈。
 
 ## JEP 481: Scoped Values (Third Preview) - JDK 23
 
@@ -412,52 +216,20 @@ We here propose to re-preview the API in JDK 23 in order to gain additional expe
 
 - The type of the operation parameter of the [`ScopedValue.callWhere`](https://cr.openjdk.org/~alanb/sv-20240517/java.base/java/lang/ScopedValue.html#callWhere(java.lang.ScopedValue,T,java.lang.ScopedValue.CallableOp)) method is now a new functional interface which allows the Java compiler to infer whether a checked exception might be thrown. With this change, the [`ScopedValue.getWhere`](https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/ScopedValue.html#getWhere(java.lang.ScopedValue,T,java.util.function.Supplier)) method is no longer needed and is removed.
 
-1. Key Change - callWhere Method Enhancement:
+  ScopedValue.callWhere 方法的操作参数类型现在变为一个新的函数式接口，该接口允许 Java 编译器推断可能抛出的受检异常。通过这一变更，ScopedValue.getWhere 方法已不再需要并被移除。
+  
 
 ```java
-// JEP 446
-public class OldExample {
-    static final ScopedValue<String> VALUE = ScopedValue.newInstance();
-    
-    void oldMethod() throws Exception {
-        String result = ScopedValue.callWhere(VALUE, "data", () -> {
-            // Compiler couldn't properly infer checked exceptions
-            return processData();
-        });
-    }
-}
+// JDK 21 (JEP 446)
+static <T> Carrier where(ScopedValue<T> key, T value)
+static <T, R> R callWhere(ScopedValue<T> key, T value, Callable<? extends R> op) throws Exception
+static <T> void runWhere(ScopedValue<T> key, T value, Runnable op)
+static <T, R> R getWhere(ScopedValue<T> key, T value, Supplier<? extends R> op)
 
-// JEP 481 - New Carrier interface
-public class NewExample {
-    static final ScopedValue<String> VALUE = ScopedValue.newInstance();
-    
-    void newMethod() throws IOException {  // More precise exception handling
-        String result = ScopedValue.callWhere(VALUE, "data", () -> {
-            // Compiler can now infer IOException
-            return processData();
-        });
-    }
-}
-```
-
-2. Removal of getWhere Method:
-
-```java
-// JEP 446 - Had both methods
-class OldAPI {
-    // Now removed
-    public static <V> V getWhere(ScopedValue<V> value, V newValue);
-    public static <R> R callWhere(ScopedValue<?> value, Object newValue, Callable<R> op);
-}
-
-// JEP 481 - Simplified API
-class NewAPI {
-    // Only callWhere with new Carrier interface
-    public static <R, X extends Throwable> R callWhere(
-        ScopedValue<?> value, 
-        Object newValue, 
-        Carrier<R, X> op) throws X;
-}
+// JDK 23 (JEP 481)
+static <T> Carrier where(ScopedValue<T> key, T value)
+static <T, R, X extends Throwable> R callWhere(ScopedValue<T> key, T value, CallableOp<? extends R, X> op) throws X
+static <T> void runWhere(ScopedValue<T> key, T value, Runnable op)
 ```
 
 ## JEP 487: Scoped Values (Fourth Preview) - JDK 24
@@ -468,7 +240,17 @@ We here propose to re-preview the API once more in JDK 24 in order to gain addit
 
 - We removed the `callWhere` and `runWhere` methods from the `ScopedValue` class, leaving the API completely [fluent](https://en.wikipedia.org/wiki/Fluent_interface). The only way to use one or more bound scoped values is via the `ScopedValue.Carrier.call` and `ScopedValue.Carrier.run` methods.
 
-1. API Simplification - Removal of callWhere and runWhere:
+  我们从ScopedValue类中移除了callWhere和runWhere方法，使API完全保持流畅。使用一个或多个绑定作用域值的唯一方式，是通过ScopedValue.Carrier.call和ScopedValue.Carrier.run方法实现。
+
+```java
+// JDK 23 (JEP 481)
+static <T> Carrier where(ScopedValue<T> key, T value)
+static <T, R, X extends Throwable> R callWhere(ScopedValue<T> key, T value, CallableOp<? extends R, X> op) throws X
+static <T> void runWhere(ScopedValue<T> key, T value, Runnable op)
+    
+// JDK 24 (JEP 487)
+static <T> Carrier where(ScopedValue<T> key, T value)
+```
 
 ```java
 // JEP 481 - Previous API
@@ -500,43 +282,6 @@ public class NewExample {
         // New fluent way using where().run()
         ScopedValue.where(VALUE, "data")
                   .run(() -> processData());
-    }
-}
-```
-
-2. Multiple Bindings - More Elegant Syntax:
-
-```java
-// JEP 487 - Fluent API for multiple bindings
-public class MultiBindingExample {
-    static final ScopedValue<String> NAME = ScopedValue.newInstance();
-    static final ScopedValue<Integer> AGE = ScopedValue.newInstance();
-    
-    void process() {
-        ScopedValue.where(NAME, "John")
-                  .where(AGE, 30)
-                  .run(() -> {
-                      String name = NAME.get();
-                      int age = AGE.get();
-                      // Use values...
-                  });
-    }
-}
-```
-
-3. Carrier Interface Usage:
-
-```java
-public class CarrierExample {
-    static final ScopedValue<Context> CTX = ScopedValue.newInstance();
-    
-    // Using Carrier for checked exceptions
-    String processWithException() throws IOException {
-        return ScopedValue.where(CTX, new Context())
-                         .call(() -> {
-                             // Compiler correctly infers IOException
-                             return readFile();
-                         });
     }
 }
 ```

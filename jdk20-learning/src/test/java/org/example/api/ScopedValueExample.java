@@ -1,7 +1,12 @@
-package org.example;
+package org.example.api;
 
 import jdk.incubator.concurrent.ScopedValue;
 
+/**
+ * Exception in thread "main" java.lang.NoClassDefFoundError: jdk/incubator/concurrent/ScopedValue
+ * <p>
+ * 以上报错解决方案：在运行配置（Run Configuration）中添加 VM 选项：--add-modules jdk.incubator.concurrent
+ */
 public class ScopedValueExample {
 
   public static void main(String[] args) {
@@ -40,6 +45,7 @@ public class ScopedValueExample {
       // 创建用户上下文
       UserContext context = new UserContext(userId, role);
 
+      // JDK 20 (JEP 429)
       // 在特定作用域内执行业务逻辑
       ScopedValue.where(USER_CONTEXT, context)
           .run(() -> {

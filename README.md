@@ -199,3 +199,5 @@ Enable preview features in Maven.
 
 [https://jeps.dev/blog](https://jeps.dev/blog)
 
+[https://javaguide.cn/home.html](https://javaguide.cn/home.html)
+
