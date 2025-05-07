@@ -2,20 +2,20 @@
 
 ## JEP 333: ZGC: A Scalable Low-Latency Garbage Collector (Experimental) - JDK 11
 
+首次引入ZGC，作为实验特性。
+
 Z垃圾收集器，也称为ZGC，是一种可扩展的低延迟垃圾收集器。
 
 ZGC是一个并发、单代、基于区域、支持NUMA的压缩收集器。
 
 停止世界阶段仅限于根扫描，因此GC暂停时间不会随着堆或活动集的大小而增加。
 
-工作原理：基于负载屏障与彩色对象指针（即彩色oops）的结合使用。这允许ZGC在Java应用程序线程运行时执行并发操作，如对象重定位。
+工作原理：着色指针和读屏障技术。基于负载屏障与彩色对象指针（即彩色oops）的结合使用。这允许ZGC在Java应用程序线程运行时执行并发操作，如对象重定位。
 
-主要特点：
+主要特性：
 
-- GC暂停时间不超过10ms
-
-- 支持从几百MB到数TB的堆内存规模
-
+- 低延迟（<10ms），暂停时间不超过10ms
+- 可扩展（支持TB级堆内存），支持从几百MB到数TB的堆内存规模
 - 相比G1，应用吞吐量降低不超过15%
 
 初始实验版本：
@@ -31,17 +31,31 @@ ZGC是实验性特性，默认情况下构建系统不会包含它。Oracle生�
 - 构建时：使用 `--with-jvm-features=zgc` 编译配置选项，在JDK构建时显式启用ZGC特性。
 - 运行时：使用 `-XX:+UnlockExperimentalVMOptions -XX:+UseZGC` 启用/使用ZGC。
 
+## JEP 351: ZGC: Uncommit Unused Memory (Experimental) - JDK 13
+
+添加了uncommit unused memory功能
+
+## JEP 364: ZGC on macOS (Experimental) - JDK 14
+
+增加了MacOS支持
+
+## JEP 365: ZGC on Windows (Experimental) - JDK 14
+
+增加了Windows支持
+
 ## JEP 377: ZGC: A Scalable Low-Latency Garbage Collector (Production) - JDK 15
 
-将Z垃圾回收器从实验功能更改为产品功能。默认GC，仍为G1。
+ZGC正式转为生产特性（Production Ready）：将Z垃圾回收器从实验功能更改为产品功能。默认GC，仍为G1。
+
+提供了JFR (Java Flight Recorder)事件支持
+
+优化了对象分配性能
 
 ## JEP 376: ZGC: Concurrent Thread-Stack Processing - JDK 16
 
-将ZGC 线程栈处理从**安全点（Safepoints）**移至并发阶段。
+增加了并发栈处理能力：将ZGC 线程栈处理从**安全点（Safepoints）**移至并发阶段。
 
-为了进行垃圾回收，需要所有的线程都暂停下来，这个暂停的时间我们成为 **Stop The World**。
-
-为了实现 STW 这个操作， JVM 需要为每个线程选择一个点停止运行，这个点就叫做**安全点（Safepoints）**。
+> 为了进行垃圾回收，需要所有的线程都暂停下来，这个暂停的时间我们成为 **Stop The World**。为了实现 STW 这个操作， JVM 需要为每个线程选择一个点停止运行，这个点就叫做**安全点（Safepoints）**。
 
 ## JEP 439: Generational ZGC - JDK 21
 
