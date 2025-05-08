@@ -31,33 +31,95 @@ Garbage Collection Algorithms（垃圾回收算法）是具体的垃圾回收策
 
 Garbage Collectors（垃圾收集器）是算法的具体实现，是真正执行垃圾回收的组件，可能组合使用多种算法。
 
-- Serial GC
-  * 单线程收集器
-  * 使用mark-copy（新生代）和mark-compact（老年代）
-  * 适用于单核小内存场景
-
-- Parallel GC
-  * 多线程并行收集
-  * 新生代使用mark-copy
-  * 老年代使用mark-sweep-compact
-  * 注重吞吐量
-
+- Serial GC（串行GC）
+  * Introduced in：JDK 1.3
+  * Default in：Client JVMs prior to JDK 9（JDK 9之前的客户端JVM）
+  * 主要特性：
+    * 单线程收集器
+    * 使用mark-copy（新生代）和mark-compact（老年代）
+  
+  * 适用场景：
+    * 适用于单核小内存场景
+    * Simple and efficient for single-threaded applications 简单高效，适用于单线程应用程序
+    * Not suitable for multi-threaded applications due to stop-the-world pauses 由于世界暂停，不适合多线程应用程序
+  
+  * To enable/use Serial GC using the JVM options: `-XX:+UseSerialGC`
+  
+- Parallel GC/Throughput GC（并行GC/吞吐量GC）
+  
+  * Introduced in：JDK 1.4
+  * Default in：Server JVMs prior to JDK 9（JDK 9之前的服务器JVM）
+  * 主要特性：
+    * 多线程并行收集
+    * 新生代使用mark-copy
+    * 老年代使用mark-sweep-compact
+    * 注重吞吐量
+  * 适用场景：
+    * Good throughput and suitable for multi-threaded applications 良好的吞吐量，适用于多线程应用程序
+    * Stop-the-world pauses can be long, which may not suitable for latency-sensitive applications 停止世界暂停可能很长，这可能不适合对延迟敏感的应用程序
+  
+  * To enable/use Parallel GC using the JVM options: `-XX:+UseParallelGC`
+  
 - CMS (Concurrent Mark Sweep)
-  * 并发收集器
-  * 以最短停顿时间为目标
-  * 使用mark-sweep算法
-  * 适用于对响应时间要求高的应用
-
+  
+  * Introduced in：JDK 1.4.2
+  * Deprecated in：JDK 9
+  * Removed in：JDK 14
+  * 主要特性：
+    * 并发收集器
+    * 使用mark-sweep算法
+    * 以最短停顿时间为目标
+    * Higher CPU usage and can lead to fragmentaion CPU使用率更高，可能导致碎片化
+  * 适用场景：
+    * 适用于对响应时间要求高的应用
+    * Low pause times and suitable for applications requiring low latency 低暂停时间，适用于需要低延迟的应用程序
+  
+  * To enable/use CMS using the JVM options: `-XX:+UseConcMarkSweepGC`
+  
 - G1 (Garbage First)
-  * 将堆内存分割成多个区域
-  * 可预测的停顿时间模型
-  * 整体上是标记-整理算法，局部是复制算法
-  * 适用于大内存多核场景
+  
+  * Introduced in：JDK 7（experimental）
+  * Default in：JDK 9
+  * 主要特性：
+    * 整体上是标记-整理算法，局部是复制算法
+    * 将堆内存分割成多个区域
+    * 可预测的停顿时间模型
+    * More complex and can have higher overhead compared to simpler GCs 与更简单的GC相比，更复杂，开销更高
+  * 适用场景：
+    * 适用于大内存多核场景
+    * Balances between throughput and low pause times, suitable for large heaps 吞吐量和低暂停时间之间的平衡，适用于大堆
+  
+  * To enable/use G1 using the JVM options: `-XX:+UseG1GC`
+  
+- ZGC (Z Garbage Collector)
+  
+  * Introduced in：JDK 11（experimental）
+  * Production ready：JDK 15
+  * 主要特性：
+    * 停顿时间不超过10ms
+    * 可扩展的低延迟垃圾收集器
+    * Very low pause times, scalable to large heaps (multi-terabyte) 非常低的暂停时间，可扩展到大堆（数TB）
+    * Higher memory overhead and still evolving 内存开销更高，仍在不断发展
+  * 适用场景：
+    * 适用于大内存低延迟场景
 
-- ZGC
-  * 可扩展的低延迟垃圾收集器
-  * 停顿时间不超过10ms
-  * 适用于大内存低延迟场景
+- Epsilon GC (No-Op GC) Epsilon GC（无操作GC）
+
+  * Introduced in：JDK 11
+  * 主要特性：
+    * No garbage collection, useful for performance testing and short-lived applications 无垃圾回收，适用于性能测试和短期应用程序
+    * No memory reclamation, leading to eventual OutOfMemoryError 没有内存回收，最终导致OutOfMemoryError
+
+  * To enable/use Epsilon GC using the JVM options: `-XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC`
+
+- Shenandoah GC
+
+  * Introduced in：JDK 12（experimental）
+  * Production ready：JDK 15
+  * 主要特性：
+    * Low pause times, concurrent compaction 低暂停时间，并发压缩
+    * Higher CPU usage and sill evolving CPU使用率更高，仍在不断发展
+  * To enable/use Shenandoah GC using the JVM options: `-XX:+UseShenandoahGC`
 
 理解它们的工作原理和适用场景。
 

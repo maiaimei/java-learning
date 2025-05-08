@@ -63,7 +63,103 @@ ZGC正式转为生产特性（Production Ready）：将Z垃圾回收器从实验
 
 启用分代ZGC：`-XX:+UseZGC -XX:+ZGenerational`
 
+## Change Log
+
+### JDK 24
+
+- Removed the non-generational mode of ZGC ([JEP 490](https://openjdk.org/jeps/490))
+
+  Remove the non-generational mode by obsoleting the `ZGenerational` option and removing the non-generational ZGC code and its tests. The option will expire in a future release, at which point it will not be recognized by the HotSpot JVM, which will refuse to start.
+
+  After these changes, the relevant command-line options will work as follows:
+
+  - `-XX:+UseZGC`
+    - Generational ZGC is used.
+  - `-XX:+UseZGC -XX:+ZGenerational`
+    - Generational ZGC is used.
+    - An obsolete-option warning is printed.
+  - `-XX:+UseZGC -XX:-ZGenerational`
+    - Generational ZGC is used.
+    - An obsolete-option warning is printed.
+
+### JDK 23
+
+- Make Generational ZGC the default ZGC version (and deprecate non-generational ZGC) ([JEP 474](https://openjdk.org/jeps/474))
+- Latency Issue Due to ICBufferFull Safepoints Resolved ([JDK-8322630](https://bugs.openjdk.org/browse/JDK-8322630)) 
+
+### JDK 21
+
+- Support for generations (-XX:+ZGenerational) ([JEP 439](https://openjdk.org/jeps/439))
+  * To enable/use non-generational ZGC using the JVM options: `-XX:+UseZGC` at run-time
+  * To enable/use Generational ZGC using the JVM options: `-XX:+UseZGC -XX:+ZGenerational` at run-time
+
+### JDK 18
+
+- Support for String Deduplication (-XX:+UseStringDeduplication)
+- Linux/PowerPC support
+- Various bug-fixes and optimizations
+
+### JDK 17
+
+- Dynamic Number of GC threads
+- Reduced mark stack memory usage
+- macOS/aarch64 support
+- GarbageCollectorMXBeans for both pauses and cycles
+- Fast JVM termination
+
+### JDK 16
+
+- Concurrent Thread Stack Scanning ([JEP 376](http://openjdk.java.net/jeps/376))
+- Support for in-place relocation
+- Performance improvements (allocation/initialization of forwarding tables, etc)
+
+### JDK 15
+
+- Production ready ([JEP 377](http://openjdk.java.net/jeps/377)), does not change the default GC, which remains G1
+- Improved NUMA awareness
+- Improved allocation concurrency
+- Support for Class Data Sharing (CDS)
+- Support for placing the heap on NVRAM
+- Support for compressed class pointers
+- Support for incremental uncommit
+- Fixed support for transparent huge pages
+- Additional JFR events
+
+### JDK 14
+
+- macOS support ([JEP 364](http://openjdk.java.net/jeps/364)), this is an experimental feature
+- Windows support ([JEP 365](http://openjdk.java.net/jeps/365)), this is an experimental feature
+- Support for tiny/small heaps (down to 8M)
+- Support for JFR leak profiler
+- Support for limited and discontiguous address space
+- Parallel pre-touch (when using -XX:+AlwaysPreTouch)
+- Performance improvements (clone intrinsic, etc)
+- Stability improvements
+
+### JDK 13
+
+- Increased max heap size from 4TB to 16TB
+- Support for uncommitting unused memory ([JEP 351](http://openjdk.java.net/jeps/351))
+- Support for -XX:SoftMaxHeapSIze
+- Support for the Linux/AArch64 platform
+- Reduced Time-To-Safepoint
+
+### JDK 12
+
+- Support for concurrent class unloading
+- Further pause time reductions
+
+### JDK 11
+
+- Initial version of ZGC ([JEP 333](http://openjdk.java.net/jeps/333))
+  * Initially supported platform: Linux/x64
+  * Does not support class unloading (using -XX:+ClassUnloading has no effect)
+  * Build a JDK using the configure option: `--with-jvm-features=zgc`
+  * To enable/use ZGC using the JVM options: `-XX:+UnlockExperimentalVMOptions -XX:+UseZGC` at run-time
+
 ## Reference
+
+[https://wiki.openjdk.org/display/zgc/Main](https://wiki.openjdk.org/display/zgc/Main)
 
 [https://docs.oracle.com/en/java/javase/21/gctuning/z-garbage-collector.html](https://docs.oracle.com/en/java/javase/21/gctuning/z-garbage-collector.html)
 

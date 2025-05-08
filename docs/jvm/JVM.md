@@ -435,8 +435,14 @@ In addition to the `java` command, the JVM provides other tools for specific tas
 
 [https://openjdk.org/groups/hotspot/](https://openjdk.org/groups/hotspot/)
 
+[https://openjdk.org/groups/hotspot/docs/RuntimeOverview.html](https://openjdk.org/groups/hotspot/docs/RuntimeOverview.html)
+
 [The Java HotSpot Performance Engine Architecture](https://www.oracle.com/java/technologies/whitepaper.html)
 
 [Memory Management in the Java HotSpot Virtual Machine](https://www.oracle.com/docs/tech/java/memorymanagement-technical-brief.pdf)
 
 [The Java HotSpot VM - OpenJDK](https://cr.openjdk.org/~thartmann/talks/2017-Hotspot_Under_The_Hood.pdf)
+
+[https://www.infoworld.com/article/2269370/what-is-the-jvm-introducing-the-java-virtual-machine.html](https://www.infoworld.com/article/2269370/what-is-the-jvm-introducing-the-java-virtual-machine.html)
+
+[https://www.fineconstant.com/posts/comparing-jvm-performance/](https://www.fineconstant.com/posts/comparing-jvm-performance/)

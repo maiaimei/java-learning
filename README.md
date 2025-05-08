@@ -73,56 +73,6 @@ See [https://www.baeldung.com/oracle-jdk-vs-openjdk](https://www.baeldung.com/or
 
 **Oracle JDK** 下载地址：[https://www.oracle.com/java/technologies/downloads/archive/](https://www.oracle.com/java/technologies/downloads/archive/)
 
-# JVM
-
-**JVM实现**
-
-- **HotSpot** - Oracle JDK, AdoptOpenJDK, Amazon Corretto, Red Hat OpenJDK
-  - [https://openjdk.org/groups/hotspot/](https://openjdk.org/groups/hotspot/)
-  - [https://openjdk.org/groups/hotspot/docs/RuntimeOverview.html](https://openjdk.org/groups/hotspot/docs/RuntimeOverview.html)
-
-- **OpenJ9** - IBM Semeru Runtime, AdoptOpenJDK（可选）
-- **GraalVM** - Oracle JDK（可选）
-
-**默认和实验性JVM**
-
-- **默认JVM** - HotSpot（大多数实现）。
-- **实验性JVM** - GraalVM（Oracle JDK可选），OpenJ9（AdoptOpenJDK可选）。
-
-[https://www.infoworld.com/article/2269370/what-is-the-jvm-introducing-the-java-virtual-machine.html](https://www.infoworld.com/article/2269370/what-is-the-jvm-introducing-the-java-virtual-machine.html)
-
-[https://www.fineconstant.com/posts/comparing-jvm-performance/](https://www.fineconstant.com/posts/comparing-jvm-performance/)
-
-# GC
-
-Java has several garbage coectors(GCs), each with its own advantages and disadvantages. Here is a summary of the main GCs, their characteristics, and the versions in which they were introduced:
-
-| GC                                                           | Introduced in                                    | Default in                                           | Advantage                                                    | Disadvantage                                                 | Deprecated in | Removed in |
-| ------------------------------------------------------------ | ------------------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------- | ---------- |
-| Serial GC<br />串行GC                                        | JDK 1.3                                          | Client JVMs prior to JDK 9<br />JDK 9之前的客户端JVM | Simple and efficient for single-threaded applications<br />简单高效，适用于单线程应用程序 | Not suitable for multi-threaded applications due to stop-the-world pauses<br />由于世界暂停，不适合多线程应用程序 |               |            |
-| Parallel GC (also known as Throughput GC)<br />并行GC（也称为吞吐量GC） | JDK 1.4                                          | Server JVMs prior to JDK 9<br />JDK 9之前的服务器JVM | Good throughput and suitable for multi-threaded applications<br />良好的吞吐量，适用于多线程应用程序 | Stop-the-world pauses can be long, which may not suitable for latency-sensitive applications<br />停止世界暂停可能很长，这可能不适合对延迟敏感的应用程序 |               |            |
-| CMS (Concurrent Mark-Sweep) GC<br />CMS（并发标记扫描）GC    | JDK 1.4.2                                        |                                                      | Low pause times and suitable for applications requiring low latency<br />低暂停时间，适用于需要低延迟的应用程序 | Higher CPU usage and can lead to fragmentaion<br />CPU使用率更高，可能导致碎片化 | JDK 9         | JDK 14     |
-| G1(Garbage-First) GC<br />G1（垃圾优先）GC                   | JDK 7(experimental), JDK 9(default)              | JDK 9 and later                                      | Balances between throughput and low pause times, suitable for large heaps<br />吞吐量和低暂停时间之间的平衡，适用于大堆 | More complex and can have higher overhead compared to simpler GCs<br />与更简单的GC相比，更复杂，开销更高 |               |            |
-| ZGC (Z Garbage Collector)<br />ZGC（Z垃圾收集器）            | JDK 11 (experimental), JDK 15 (production-ready) |                                                      | Very low pause times, scalable to large heaps (multi-terabyte)<br />非常低的暂停时间，可扩展到大堆（数TB） | Higher memory overhead and still evolving<br />内存开销更高，仍在不断发展 |               |            |
-| Shenandoah GC                                                | JDK 12 (experimental), JDK 15 (production-ready) |                                                      | Low pause times, concurrent compaction<br />低暂停时间，并发压缩 | Higher CPU usage and sill evolving<br />CPU使用率更高，仍在不断发展 |               |            |
-| Epsilon GC (No-Op GC)<br />Epsilon GC（无操作GC）            | JDK 11                                           |                                                      | No garbage collection, useful for performance testing and short-lived applications<br />无垃圾回收，适用于性能测试和短期应用程序 | No memory reclamation, leading to eventual OutOfMemoryError<br />没有内存回收，最终导致OutOfMemoryError |               |            |
-
-Default GCs by Java Version:
-
-- JDK 8 and earlier: Serial GC for client JVMs, Parallel GC for server JVMs.
-- JDK 9 to JDK 14: G1 GC.
-- JDK 15 and later: G1 GC remains the default, but ZGC and Shenandoah are available as production-ready options.
-
-To specify a particular GC, you can use JVM options such as:
-
-- -XX:+UseSerialGC
-- -XX:+UseParallelGC
-- -XX:+UseConcMarkSweepGC
-- -XX:+UseG1GC
-- -XX:+UseZGC
-- -XX:+UseShenandoahGC
-- -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC
-
 # Project Amber
 
 The goal of Project Amber is to explore and incubate smaller, productivity-oriented Java language features that have been accepted as candidate JEPs in the [OpenJDK JEP Process](https://openjdk.org/jeps/1). This Project is sponsored by the [Compiler Group](https://openjdk.org/groups/compiler).
